@@ -1,0 +1,40 @@
+/* product-page.css */
+.product-container {
+  display: flex;
+  gap: 40px;
+  padding: 40px;
+}
+
+.product-img {
+  width: 40%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.product-info {
+  flex: 1;
+}
+
+.product-price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #002244;
+  margin-top: 12px;
+}
+
+.product-btn {
+  background: black;
+  color: white;
+  padding: 10px 24px;
+  border: none;
+  margin: 16px 0;
+}
+
+.product-notes div {
+  margin-top: 6px;
+}
+
+.product-description {
+  margin-top: 24px;
+  line-height: 1.6;
+}

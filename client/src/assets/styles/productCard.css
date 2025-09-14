@@ -1,0 +1,37 @@
+.product-card {
+  text-align: center;
+  padding: 20px;
+  transition: transform 0.3s;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+}
+
+.product-image {
+  width: 100%;
+  aspect-ratio: 3/4; /* giống Chanel */
+  object-fit: contain;
+}
+
+.product-name {
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.product-price {
+  font-size: 14px;
+  margin: 8px 0;
+}
+
+.add-to-bag {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #000;
+  text-decoration: none;
+}

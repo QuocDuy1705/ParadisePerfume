@@ -1,0 +1,40 @@
+.product-card {
+  text-align: center; /* căn giữa chữ */
+  display: flex;
+  flex-direction: column; /* sắp xếp dọc */
+  align-items: center; /* căn giữa ngang */
+  justify-content: center; /* căn giữa dọc nếu cần */
+  padding: 20px;
+}
+
+.product-card img {
+  max-width: 250px; /* giới hạn kích thước */
+  height: auto;
+  margin-bottom: 15px;
+}
+
+.product-card h3,
+.product-card p {
+  margin: 8px 0;
+}
+
+.price {
+  font-weight: bold;
+}
+
+.add-to-bag {
+  margin-top: 15px;
+  display: inline-block;
+  padding: 10px 20px;
+  border: 1px solid black;
+  text-decoration: none;
+  color: black;
+  font-size: 14px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.add-to-bag:hover {
+  background: black;
+  color: white;
+}

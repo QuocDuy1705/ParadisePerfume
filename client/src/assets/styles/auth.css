@@ -1,0 +1,174 @@
+.auth-container {
+  max-width: 450px;
+  margin: 50px auto;
+  text-align: center;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.brand-title {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+}
+
+.auth-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.auth-tabs button {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #444;
+}
+
+.auth-tabs button.active {
+  border-bottom: 2px solid black;
+  color: black;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-align: left;
+}
+
+.auth-form input,
+.auth-form select {
+  border: none;
+  border-bottom: 1px solid #ccc;
+  padding: 10px 5px;
+  font-size: 14px;
+  outline: none;
+}
+
+.auth-form input:focus,
+.auth-form select:focus {
+  border-bottom: 1px solid black;
+}
+
+.btn-black {
+  background: black;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-black:hover {
+  background: #333;
+}
+
+.policy-text {
+  font-size: 12px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.policy-text a {
+  text-decoration: underline;
+  color: black;
+}
+
+.auth-container {
+  max-width: 450px;
+  margin: 80px auto;
+  text-align: center;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #000;
+}
+
+.brand-title {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin-bottom: 40px;
+}
+
+.profile-box {
+  border: 1px solid #ddd;
+  padding: 30px;
+  text-align: left;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.profile-box p {
+  font-size: 15px;
+  margin: 12px 0;
+  font-weight: 400;
+  color: #333;
+}
+
+.btn-black {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background: #000;
+  color: #fff;
+  border: none;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-black:hover {
+  background: #333;
+}
+.section-title {
+  margin-top: 50px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-align: left;
+}
+
+.orders-box {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.orders-table th,
+.orders-table td {
+  border-bottom: 1px solid #eee;
+  padding: 12px 8px;
+  text-align: left;
+}
+
+.orders-table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.orders-table tr:hover {
+  background: #f9f9f9;
+}
+
+.empty-text {
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}

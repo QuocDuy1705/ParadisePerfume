@@ -1,0 +1,48 @@
+.hero-section {
+  background: url("../images/bleu-hero.jpg") no-repeat center center;
+  background-size: cover;
+  height: 90vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-align: center;
+}
+
+.hero-content {
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 40px;
+  border-radius: 8px;
+  max-width: 600px;
+}
+
+.hero-content h1 {
+  font-size: 48px;
+  letter-spacing: 4px;
+  font-weight: 300;
+  margin-bottom: 20px;
+}
+
+.hero-content p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.hero-button {
+  padding: 14px 32px;
+  background-color: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.hero-button:hover {
+  background-color: #fff;
+  color: #0e1111;
+}
