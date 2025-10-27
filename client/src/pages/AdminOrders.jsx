@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  ShoppingBag,
+  Eye,
+  X,
+  Package,
+  Clock,
+  Truck,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 import "../assets/styles/admin.css";
 
 const API_URL = "http://localhost:5000/api/admin";
@@ -8,6 +18,7 @@ const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState("all");
 
   const fetchOrders = async () => {
     try {
@@ -58,40 +69,131 @@ const AdminOrders = () => {
     fetchOrders();
   }, []);
 
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "pending":
+        return <Clock size={16} />;
+      case "shipped":
+        return <Truck size={16} />;
+      case "delivered":
+        return <CheckCircle size={16} />;
+      case "cancelled":
+        return <XCircle size={16} />;
+      default:
+        return <Package size={16} />;
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case "pending":
+        return "Chờ xử lý";
+      case "shipped":
+        return "Đang giao";
+      case "delivered":
+        return "Đã giao";
+      case "cancelled":
+        return "Đã hủy";
+      default:
+        return status;
+    }
+  };
+
+  const filteredOrders =
+    filter === "all" ? orders : orders.filter((o) => o.status === filter);
+
   return (
     <div className="admin-section">
-      <h2 className="admin-title">Quản lý đơn hàng</h2>
+      <div className="section-header">
+        <div>
+          <h2 className="admin-title">Quản lý đơn hàng</h2>
+          <p className="section-subtitle">Danh sách đơn hàng và trạng thái</p>
+        </div>
+        <div className="filter-group">
+          <button
+            className={`filter-btn ${filter === "all" ? "active" : ""}`}
+            onClick={() => setFilter("all")}
+          >
+            Tất cả ({orders.length})
+          </button>
+          <button
+            className={`filter-btn ${filter === "pending" ? "active" : ""}`}
+            onClick={() => setFilter("pending")}
+          >
+            Chờ xử lý ({orders.filter((o) => o.status === "pending").length})
+          </button>
+          <button
+            className={`filter-btn ${filter === "shipped" ? "active" : ""}`}
+            onClick={() => setFilter("shipped")}
+          >
+            Đang giao ({orders.filter((o) => o.status === "shipped").length})
+          </button>
+          <button
+            className={`filter-btn ${filter === "delivered" ? "active" : ""}`}
+            onClick={() => setFilter("delivered")}
+          >
+            Đã giao ({orders.filter((o) => o.status === "delivered").length})
+          </button>
+        </div>
+      </div>
 
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Người đặt</th>
-            <th>Email</th>
-            <th>Tổng giá</th>
-            <th>Trạng thái</th>
-            <th>Ngày đặt</th>
-            <th>Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orders.length === 0 ? (
-            <tr>
-              <td colSpan="6">Chưa có đơn hàng nào</td>
-            </tr>
-          ) : (
-            orders.map((o) => (
-              <tr key={o._id}>
-                <td>
-                  {o.userId
-                    ? `${o.userId.firstName} ${o.userId.lastName}`
-                    : "Unknown"}
-                </td>
-                <td>{o.userId?.email || "Không có email"}</td>
-                <td>${o.totalPrice?.toFixed(2)}</td>
-                <td>
+      {/* ORDERS LIST */}
+      <div className="orders-container">
+        {filteredOrders.length === 0 ? (
+          <div className="empty-state">
+            <ShoppingBag size={64} strokeWidth={1} />
+            <h3>Chưa có đơn hàng nào</h3>
+            <p>Đơn hàng sẽ hiển thị tại đây</p>
+          </div>
+        ) : (
+          <div className="orders-grid">
+            {filteredOrders.map((order) => (
+              <div key={order._id} className="order-card">
+                <div className="order-header">
+                  <div>
+                    <h3>
+                      {order.userId
+                        ? `${order.userId.firstName} ${order.userId.lastName}`
+                        : "Khách hàng"}
+                    </h3>
+                    <p className="order-email">
+                      {order.userId?.email || "N/A"}
+                    </p>
+                  </div>
+                  <div className={`status-badge status-${order.status}`}>
+                    {getStatusIcon(order.status)}
+                    <span>{getStatusText(order.status)}</span>
+                  </div>
+                </div>
+
+                <div className="order-info">
+                  <div className="info-row">
+                    <span className="info-label">Ngày đặt:</span>
+                    <span className="info-value">
+                      {new Date(order.createdAt).toLocaleDateString("vi-VN")}
+                    </span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">Tổng tiền:</span>
+                    <span className="info-value price">
+                      {order.totalPrice?.toLocaleString("vi-VN")}₫
+                    </span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">Sản phẩm:</span>
+                    <span className="info-value">
+                      {order.items?.length || 0} sản phẩm
+                    </span>
+                  </div>
+                </div>
+
+                <div className="order-actions">
                   <select
-                    value={o.status}
-                    onChange={(e) => updateOrderStatus(o._id, e.target.value)}
+                    className="status-select"
+                    value={order.status}
+                    onChange={(e) =>
+                      updateOrderStatus(order._id, e.target.value)
+                    }
                     disabled={loading}
                   >
                     <option value="pending">Chờ xử lý</option>
@@ -99,66 +201,110 @@ const AdminOrders = () => {
                     <option value="delivered">Đã giao</option>
                     <option value="cancelled">Đã hủy</option>
                   </select>
-                </td>
-                <td>{new Date(o.createdAt).toLocaleDateString("vi-VN")}</td>
-                <td>
                   <button
-                    className="btn-detail"
-                    onClick={() => setSelectedOrder(o)}
+                    className="btn-view"
+                    onClick={() => setSelectedOrder(order)}
                   >
-                    Xem chi tiết
+                    <Eye size={18} />
+                    <span>Chi tiết</span>
                   </button>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Modal xem chi tiết đơn hàng */}
       {selectedOrder && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Chi tiết đơn hàng</h3>
-            <p>
-              <strong>Người đặt:</strong>{" "}
-              {selectedOrder.userId
-                ? `${selectedOrder.userId.firstName} ${selectedOrder.userId.lastName}`
-                : "Unknown"}
-            </p>
-            <p>
-              <strong>Email:</strong> {selectedOrder.userId?.email}
-            </p>
-            <p>
-              <strong>Ngày đặt:</strong>{" "}
-              {new Date(selectedOrder.createdAt).toLocaleString("vi-VN")}
-            </p>
-            <p>
-              <strong>Trạng thái:</strong>{" "}
-              <span className="status-badge">{selectedOrder.status}</span>
-            </p>
+        <div className="modal-overlay" onClick={() => setSelectedOrder(null)}>
+          <div
+            className="modal-content order-detail-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <h3>Chi tiết đơn hàng</h3>
+              <button
+                className="btn-close-icon"
+                onClick={() => setSelectedOrder(null)}
+              >
+                <X size={20} />
+              </button>
+            </div>
 
-            <h4>Sản phẩm trong đơn</h4>
-            <ul>
-              {selectedOrder.items.map((i) => (
-                <li key={i._id}>
-                  {i.productId?.name || "SP đã xóa"} × {i.quantity} = $
-                  {(i.productId?.price * i.quantity).toFixed(2)}
-                </li>
-              ))}
-            </ul>
+            <div className="order-detail-content">
+              <div className="detail-section">
+                <h4>Thông tin khách hàng</h4>
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <span className="detail-label">Họ tên:</span>
+                    <span className="detail-value">
+                      {selectedOrder.userId
+                        ? `${selectedOrder.userId.firstName} ${selectedOrder.userId.lastName}`
+                        : "N/A"}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Email:</span>
+                    <span className="detail-value">
+                      {selectedOrder.userId?.email || "N/A"}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Ngày đặt:</span>
+                    <span className="detail-value">
+                      {new Date(selectedOrder.createdAt).toLocaleString(
+                        "vi-VN"
+                      )}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Trạng thái:</span>
+                    <span
+                      className={`status-badge status-${selectedOrder.status}`}
+                    >
+                      {getStatusIcon(selectedOrder.status)}
+                      <span>{getStatusText(selectedOrder.status)}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-            <p>
-              <strong>Tổng tiền:</strong> $
-              {selectedOrder.totalPrice?.toFixed(2)}
-            </p>
+              <div className="detail-section">
+                <h4>Sản phẩm trong đơn hàng</h4>
+                <div className="order-items-list">
+                  {selectedOrder.items.map((item, index) => (
+                    <div key={index} className="order-item">
+                      {item.productId?.image && (
+                        <img
+                          src={item.productId.image}
+                          alt={item.productId?.name}
+                        />
+                      )}
+                      <div className="item-info">
+                        <h5>{item.productId?.name || "Sản phẩm đã xóa"}</h5>
+                        <p>Số lượng: {item.quantity}</p>
+                      </div>
+                      <div className="item-price">
+                        {(
+                          (item.productId?.price || 0) * item.quantity
+                        ).toLocaleString("vi-VN")}
+                        ₫
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-            <button
-              className="btn-close"
-              onClick={() => setSelectedOrder(null)}
-            >
-              Đóng
-            </button>
+              <div className="detail-section total-section">
+                <div className="total-row">
+                  <span className="total-label">Tổng cộng:</span>
+                  <span className="total-value">
+                    {selectedOrder.totalPrice?.toLocaleString("vi-VN")}₫
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

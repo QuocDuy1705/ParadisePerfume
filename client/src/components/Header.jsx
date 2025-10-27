@@ -1,43 +1,95 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { FaSearch, FaRegStar, FaUser, FaShoppingBag } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import CartSidebar from "./CartSidebar";
 import { AuthContext } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 import "../assets/styles/header.css";
 
 const Header = () => {
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const { user } = useContext(AuthContext);
+  const { setIsCartOpen, cart } = useCart();
+
+  // Calculate total items in cart
+  const totalItems =
+    cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Smooth scroll animation
+    });
+  };
 
   return (
     <header className="header">
       <div className="top">
-        <h1 className="logo">PARADISE</h1>
+        <Link
+          to="/"
+          onClick={scrollToTop}
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <h1 className="logo" style={{ cursor: "pointer" }}>
+            PARADISE
+          </h1>
+        </Link>
         <div className="icons">
           <FaSearch className="icon" />
           <FaRegStar className="icon" />
 
           {/* Nếu có user thì về /profile, chưa có thì về /auth */}
-          <Link to={user ? "/profile" : "/auth"}>
+          <Link to={user ? "/profile" : "/auth"} onClick={scrollToTop}>
             <FaUser className="icon" />
           </Link>
 
-          <FaShoppingBag className="icon" onClick={() => setIsCartOpen(true)} />
+          <div style={{ position: "relative", display: "inline-block" }}>
+            <FaShoppingBag
+              className="icon"
+              onClick={() => setIsCartOpen(true)}
+              style={{ cursor: "pointer" }}
+            />
+            {totalItems > 0 && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: "-5px",
+                  right: "-5px",
+                  backgroundColor: "red",
+                  color: "white",
+                  borderRadius: "50%",
+                  padding: "2px 6px",
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                }}
+              >
+                {totalItems}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
       <nav className="nav">
-        <Link to="/">TRANG CHỦ</Link>
-        <Link to="/men">NƯỚC HOA NAM</Link>
-        <Link to="/women">NƯỚC HOA NỮ</Link>
-        <Link to="/mini">NƯỚC HOA MINI</Link>
-        <Link to="/giftset">GIFTSET</Link>
-        <Link to="/about">ABOUT PARADISE</Link>
+        <Link to="/" onClick={scrollToTop}>
+          TRANG CHỦ
+        </Link>
+        <Link to="/men" onClick={scrollToTop}>
+          NƯỚC HOA NAM
+        </Link>
+        <Link to="/women" onClick={scrollToTop}>
+          NƯỚC HOA NỮ
+        </Link>
+        <Link to="/mini" onClick={scrollToTop}>
+          NƯỚC HOA MINI
+        </Link>
+        <Link to="/giftset" onClick={scrollToTop}>
+          GIFTSET
+        </Link>
+        <Link to="/about" onClick={scrollToTop}>
+          ABOUT PARADISE
+        </Link>
       </nav>
-
-      {/* Sidebar giỏ hàng */}
-      <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </header>
   );
 };

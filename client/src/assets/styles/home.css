@@ -1,165 +1,434 @@
 :root {
-  --font-main: "Helvetica Neue", Arial, sans-serif;
-  --text-dark: #1a1a1a;
-  --text-light: #000;
+  --font-main: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --text-dark: #000000;
+  --text-light: #666666;
+  --border-light: #e5e5e5;
+  --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
   font-family: var(--font-main);
   color: var(--text-dark);
-  background: #fff;
+  background: #ffffff;
   margin: 0;
   padding: 0;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .homepage {
-  padding: 40px 60px;
+  padding: 0;
+  background: #ffffff;
+}
+
+/* Luxury Statement Section */
+.luxury-statement {
+  text-align: center;
+  padding: 80px 40px;
+  background: linear-gradient(to bottom, #fafafa 0%, #ffffff 100%);
+  margin-bottom: 40px;
+}
+
+.luxury-statement p:first-child {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+}
+
+.statement-divider {
+  width: 60px;
+  height: 1px;
+  background: var(--text-dark);
+  margin: 0 auto 20px;
+}
+
+.statement-subtitle {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+/* Section Divider */
+.section-divider {
+  padding: 60px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.divider-line {
+  width: 100%;
+  max-width: 200px;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    var(--border-light) 50%,
+    transparent 100%
+  );
 }
 
 /* Section */
 .category-section {
-  margin-bottom: 100px;
+  margin-bottom: 120px;
   text-align: center;
+  padding: 0 80px;
+}
+
+.category-section:first-of-type {
+  margin-top: 80px;
 }
 
 .category-section h2 {
-  font-size: 22px;
+  font-size: 14px;
   font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 40px;
+  letter-spacing: 4px;
+  margin-bottom: 60px;
   color: var(--text-dark);
+  position: relative;
+  display: inline-block;
 }
 
-/* Grid */
+.category-section h2::after {
+  content: "";
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 1px;
+  background: var(--text-dark);
+}
+
+/* Grid - Cố định 3 cột và căn giữa */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 80px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 80px 50px;
+  max-width: 1400px;
+  margin: 0 auto;
   justify-items: center;
+  padding: 0 20px;
 }
 
-/* Product Card */
+/* Product Card - Chanel Style */
 .product-card {
-  background: #fff;
+  background: #ffffff;
   border: none;
   text-align: center;
-  max-width: 280px;
-  transition: transform 0.3s ease;
+  width: 100%;
+  max-width: 340px;
+  transition: var(--transition);
+  cursor: pointer;
+  position: relative;
 }
 
 .product-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-8px);
 }
 
 .product-card img {
   width: 100%;
-  max-width: 250px;
-  height: 330px;
-  object-fit: contain; /* giữ nguyên hình ảnh, có thể có viền trống */
-  background: #fff;
+  height: 420px;
+  object-fit: cover;
+  background: #fafafa;
+  border: 1px solid var(--border-light);
+  transition: var(--transition);
+}
+
+.product-card:hover img {
+  opacity: 0.95;
+  border-color: var(--text-dark);
 }
 
 /* Tên sản phẩm */
 .product-card h3 {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
-  margin: 15px 0 8px;
-  color: #1a1a1a;
-  letter-spacing: 1px;
+  margin: 24px 0 10px;
+  color: var(--text-dark);
+  letter-spacing: 2.5px;
+  line-height: 1.4;
 }
 
 /* Loại hoặc mô tả */
 .product-card .product-category {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 300;
-  color: #555;
-  margin-bottom: 6px;
+  color: var(--text-light);
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 /* Giá */
 .product-card .price {
   font-size: 13px;
-  font-weight: 300;
-  color: #000;
-  margin-bottom: 14px;
+  font-weight: 400;
+  color: var(--text-dark);
+  margin-bottom: 18px;
+  letter-spacing: 0.5px;
 }
 
-/* Add to bag link */
-.product-card .add-to-bag {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 500;
-  text-transform: uppercase;
-  color: #000;
-  text-decoration: none;
-  border-bottom: 1px solid #000;
-  padding-bottom: 2px;
-  transition: opacity 0.3s;
-}
-
-.product-card .add-to-bag:hover {
-  opacity: 0.6;
-}
-
-.view-more-btn {
-  margin-top: 30px;
-  padding: 10px 24px;
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  background: transparent;
-  border: 1px solid #000;
-  color: #000;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.view-more-btn:hover {
-  background: #000;
-  color: #fff;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .homepage {
-    padding: 20px;
-  }
-
-  .category-section h2 {
-    font-size: 18px;
-    margin-bottom: 30px;
-  }
-
-  .product-grid {
-    gap: 40px;
-  }
-}
-
-.product-link {
-  text-decoration: none; /* bỏ gạch chân */
-  color: inherit; /* giữ nguyên màu chữ */
-}
-.product-link:hover {
-  opacity: 0.8; /* hiệu ứng hover đẹp hơn */
-}
-
+/* Add to bag button - Chanel Style */
 .add-to-bag {
   display: inline-block;
-  padding: 10px 25px;
-  border: 1px solid #000;
+  padding: 12px 32px;
+  border: 1px solid var(--text-dark);
   background: transparent;
-  color: #000;
-  font-size: 14px;
+  color: var(--text-dark);
+  font-size: 11px;
   font-weight: 500;
   cursor: pointer;
   text-transform: uppercase;
-  transition: all 0.3s ease;
+  letter-spacing: 2px;
+  transition: var(--transition);
+  margin-top: 8px;
 }
 
 .add-to-bag:hover {
-  background: #000;
-  color: #fff;
+  background: var(--text-dark);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.view-more-btn {
+  margin-top: 50px;
+  padding: 14px 40px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  background: transparent;
+  border: 1px solid var(--text-dark);
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.view-more-btn:hover {
+  background: var(--text-dark);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Search Results Section */
+.search-results {
+  margin-bottom: 120px;
+  text-align: center;
+  padding: 0 80px;
+}
+
+.search-results h2 {
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: 60px;
+  color: var(--text-dark);
+  position: relative;
+  display: inline-block;
+}
+
+.search-results h2::after {
+  content: "";
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 1px;
+  background: var(--text-dark);
+}
+
+.search-results p {
+  font-size: 13px;
+  color: var(--text-light);
+  padding: 60px 0;
+  letter-spacing: 1px;
+}
+
+.product-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.product-link:hover {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .category-section {
+    padding: 0 40px;
+  }
+
+  .search-results {
+    padding: 0 40px;
+  }
+
+  .product-grid {
+    gap: 60px 40px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 60px 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .homepage {
+    padding: 0;
+  }
+
+  .luxury-statement {
+    padding: 60px 30px;
+  }
+
+  .category-section {
+    padding: 0 30px;
+    margin-bottom: 80px;
+  }
+
+  .search-results {
+    padding: 0 30px;
+    margin-bottom: 80px;
+  }
+
+  .category-section h2,
+  .search-results h2 {
+    font-size: 12px;
+    letter-spacing: 3px;
+    margin-bottom: 40px;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px 25px;
+    padding: 0 10px;
+  }
+
+  .product-card img {
+    height: 320px;
+  }
+
+  .luxury-experience {
+    padding: 60px 30px;
+  }
+
+  .experience-content h3 {
+    font-size: 16px;
+  }
+
+  .experience-features {
+    flex-direction: column;
+    gap: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+    gap: 50px;
+  }
+
+  .category-section {
+    padding: 0 20px;
+  }
+
+  .search-results {
+    padding: 0 20px;
+  }
+
+  .product-card {
+    max-width: 100%;
+  }
+
+  .product-card img {
+    height: 400px;
+  }
+
+  .luxury-statement {
+    padding: 50px 20px;
+  }
+
+  .luxury-experience {
+    padding: 50px 20px;
+  }
+}
+
+/* Luxury Experience Banner */
+.luxury-experience {
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+  padding: 100px 80px;
+  margin-top: 80px;
+  text-align: center;
+}
+
+.experience-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.experience-content h3 {
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--text-dark);
+  margin-bottom: 30px;
+}
+
+.experience-content > p {
+  font-size: 14px;
+  line-height: 2;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+  margin-bottom: 60px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.experience-features {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  flex-wrap: wrap;
+}
+
+.feature {
+  text-align: center;
+}
+
+.feature-icon {
+  font-size: 24px;
+  color: var(--text-dark);
+  margin-bottom: 15px;
+}
+
+.feature p {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dark);
+  margin: 0;
 }
