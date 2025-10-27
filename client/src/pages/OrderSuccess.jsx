@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import "../assets/styles/orderSuccess.css";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
 const OrderSuccess = () => {
@@ -10,10 +10,20 @@ const OrderSuccess = () => {
   const paymentMethod = location.state?.paymentMethod || "COD";
   const totalAmount = location.state?.totalAmount;
 
-  // Clear cart when component mounts (after successful order)
+  // Clear cart when arriving at success page
   useEffect(() => {
     clearCart();
   }, [clearCart]);
+
+  const handleContinueShopping = () => {
+    console.log("Navigate to home");
+    window.location.href = "/";
+  };
+
+  const handleViewOrders = () => {
+    console.log("Navigate to orders");
+    window.location.href = "/orders";
+  };
 
   const getPaymentMethodName = (method) => {
     switch (method?.toLowerCase()) {
@@ -84,12 +94,20 @@ const OrderSuccess = () => {
         </p>
 
         <div className="order-actions">
-          <Link to="/" className="btn-home">
+          <button
+            onClick={handleContinueShopping}
+            className="btn-home"
+            type="button"
+          >
             TIẾP TỤC MUA SẮM
-          </Link>
-          <Link to="/orders" className="btn-orders">
+          </button>
+          <button
+            onClick={handleViewOrders}
+            className="btn-orders"
+            type="button"
+          >
             XEM ĐƠN HÀNG
-          </Link>
+          </button>
         </div>
       </div>
     </div>

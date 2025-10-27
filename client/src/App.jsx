@@ -30,6 +30,20 @@ const MoMoReturn = lazy(() => import("./pages/MoMoReturn"));
 const SearchResultsPage = lazy(() => import("./pages/SearchResultsPage"));
 const WishlistPage = lazy(() => import("./pages/WishlistPage"));
 
+// Info pages from Footer
+const ContactPage = lazy(() => import("./pages/ContactPage"));
+const FAQPage = lazy(() => import("./pages/FAQPage"));
+const ShippingPage = lazy(() => import("./pages/ShippingPage"));
+const ReturnsPage = lazy(() => import("./pages/ReturnsPage"));
+const WarrantyPage = lazy(() => import("./pages/WarrantyPage"));
+const StoresPage = lazy(() => import("./pages/StoresPage"));
+const CareersPage = lazy(() => import("./pages/CareersPage"));
+const SustainabilityPage = lazy(() => import("./pages/SustainabilityPage"));
+const HowToOrderPage = lazy(() => import("./pages/HowToOrderPage"));
+const PaymentPage = lazy(() => import("./pages/PaymentPage"));
+const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
+const TermsPage = lazy(() => import("./pages/TermsPage"));
+
 // Loading component
 const LoadingSpinner = () => (
   <div
@@ -73,6 +87,20 @@ const App = () => {
           <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="/vnpay-return" element={<VNPayReturn />} />
           <Route path="/momo-return" element={<MoMoReturn />} />
+
+          {/* Info Pages */}
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/shipping" element={<ShippingPage />} />
+          <Route path="/returns" element={<ReturnsPage />} />
+          <Route path="/warranty" element={<WarrantyPage />} />
+          <Route path="/stores" element={<StoresPage />} />
+          <Route path="/careers" element={<CareersPage />} />
+          <Route path="/sustainability" element={<SustainabilityPage />} />
+          <Route path="/how-to-order" element={<HowToOrderPage />} />
+          <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
         </Routes>
       </Suspense>
       <Footer />

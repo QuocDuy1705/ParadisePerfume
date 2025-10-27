@@ -96,10 +96,10 @@ const Home = () => {
 
       {/* Luxury Statement */}
       <div className="luxury-statement">
-        <p>L'ART DE LA PARFUMERIE</p>
+        <p>NGHỆ THUẬT CHÍNH HÃNG</p>
         <div className="statement-divider"></div>
         <p className="statement-subtitle">
-          Chaque parfum raconte une histoire unique
+          Mỗi chai nước hoa kể một câu chuyện riêng
         </p>
       </div>
 
@@ -131,12 +131,12 @@ const Home = () => {
               <section className="category-section">
                 <h2>
                   {cat === "Men"
-                    ? "Pour Homme"
+                    ? "Nước hoa nam"
                     : cat === "Women"
-                    ? "Pour Femme"
+                    ? "Nước hoa nữ"
                     : cat === "Mini"
-                    ? "Collection Miniature"
-                    : "Coffret Cadeau"}
+                    ? "Bộ sưu tập mini"
+                    : "Hộp quà tặng"}
                 </h2>
 
                 <div className="product-grid">
@@ -174,7 +174,7 @@ const Home = () => {
       {/* Luxury Experience Banner */}
       <div className="luxury-experience">
         <div className="experience-content">
-          <h3>THE ART OF PERFUMERY</h3>
+          <h3>NGHỆ THUẬT NƯỚC HOA</h3>
           <p>
             Mỗi chai nước hoa là một tác phẩm nghệ thuật, được chế tác tỉ mỉ từ
             những nguyên liệu quý hiếm nhất. Hãy để Paradise dẫn dắt bạn vào thế
@@ -183,15 +183,15 @@ const Home = () => {
           <div className="experience-features">
             <div className="feature">
               <div className="feature-icon">✦</div>
-              <p>100% Authentic</p>
+              <p>100% Chính hãng</p>
             </div>
             <div className="feature">
               <div className="feature-icon">✦</div>
-              <p>Free Shipping</p>
+              <p>Miễn phí vận chuyển</p>
             </div>
             <div className="feature">
               <div className="feature-icon">✦</div>
-              <p>Luxury Packaging</p>
+              <p>Đóng gói sang trọng</p>
             </div>
           </div>
         </div>

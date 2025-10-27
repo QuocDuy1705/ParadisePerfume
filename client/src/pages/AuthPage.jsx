@@ -167,8 +167,9 @@ const AuthPage = () => {
             required
           />
           <p className="policy-text">
-            By creating an account, I agree to PARADISE’s{" "}
-            <a href="#">Privacy Policy</a> and <a href="#">Legal Statement</a>.
+            By creating an account, I agree to PARADISE's{" "}
+            <a href="/privacy">Privacy Policy</a> and{" "}
+            <a href="/terms">Legal Statement</a>.
           </p>
           <button type="submit" className="btn-black">
             CONTINUE

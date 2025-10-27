@@ -46,10 +46,10 @@ const ProductCard = ({ product }) => {
   // Format tên danh mục
   const formatCategory = (category) => {
     const categories = {
-      Men: "Eau de Parfum Pour Homme",
-      Women: "Eau de Parfum Pour Femme",
-      Mini: "Miniature Collection",
-      Giftset: "Coffret Prestige",
+      Men: "Nước hoa nam",
+      Women: "Nước hoa nữ",
+      Mini: "Bộ sưu tập mini",
+      Giftset: "Hộp quà cao cấp",
     };
     return categories[category] || category;
   };

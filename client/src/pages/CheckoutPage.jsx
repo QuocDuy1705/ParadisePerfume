@@ -6,7 +6,7 @@ import api from "../utils/api";
 import "../assets/styles/checkout.css";
 
 const CheckoutPage = () => {
-  const { cart, clearCart } = useCart();
+  const { cart } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -97,20 +97,15 @@ const CheckoutPage = () => {
         console.log("Order created:", res.data);
 
         // Điều hướng sang trang success với thông tin đầy đủ
-        // Lưu ý: KHÔNG clearCart ở đây vì useEffect sẽ redirect về trang chủ
-        // clearCart sẽ được gọi ở trang OrderSuccess
+        // KHÔNG clear cart ở đây để tránh useEffect redirect
         navigate("/order-success", {
           state: {
             orderId: res.data.order?._id,
             paymentMethod: "COD",
             totalAmount: finalTotal,
           },
+          replace: true,
         });
-
-        // Clear cart sau khi navigate để tránh bị redirect về home
-        setTimeout(() => {
-          clearCart();
-        }, 100);
       }
     } catch (err) {
       console.error("Checkout error:", err.response?.data || err.message);

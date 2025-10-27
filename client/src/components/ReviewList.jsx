@@ -66,7 +66,7 @@ const ReviewList = ({ productId, refreshTrigger }) => {
     return (
       <div className="reviews-loading">
         <div className="loading-spinner"></div>
-        <p>Chargement des avis...</p>
+        <p>Đang tải đánh giá...</p>
       </div>
     );
   }
@@ -147,7 +147,7 @@ const ReviewList = ({ productId, refreshTrigger }) => {
       {reviews.length === 0 ? (
         <div className="no-reviews">
           <p>
-            Aucun avis pour le moment. Soyez le premier à donner votre avis!
+            Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá sản phẩm này!
           </p>
         </div>
       ) : (

@@ -160,14 +160,14 @@ const SearchResultsPage = () => {
             ) : products.length === 0 ? (
               <div className="search-no-results">
                 <Search size={48} className="no-results-icon" />
-                <h2>AUCUN RÉSULTAT TROUVÉ</h2>
+                <h2>KHÔNG TÌM THẤY KẾT QUẢ</h2>
                 <p>
                   {keyword
-                    ? `Aucun produit ne correspond à votre recherche "${keyword}".`
-                    : "Aucun produit ne correspond à vos critères de recherche."}
+                    ? `Không tìm thấy sản phẩm nào phù hợp với tìm kiếm "${keyword}".`
+                    : "Không tìm thấy sản phẩm nào phù hợp với tiêu chí tìm kiếm của bạn."}
                 </p>
                 <button className="browse-btn" onClick={() => navigate("/")}>
-                  RETOUR À L'ACCUEIL
+                  VỀ TRANG CHỦ
                 </button>
               </div>
             ) : (

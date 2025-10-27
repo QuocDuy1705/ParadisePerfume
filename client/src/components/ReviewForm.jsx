@@ -70,12 +70,12 @@ const ReviewForm = ({ productId, onReviewSubmitted }) => {
 
   return (
     <div className="review-form">
-      <h3 className="review-form-title">ÉCRIRE UN AVIS</h3>
+      <h3 className="review-form-title">VIẾT ĐÁNH GIÁ</h3>
 
       <form onSubmit={handleSubmit}>
         {/* Rating Stars */}
         <div className="form-group">
-          <label className="form-label">Votre note *</label>
+          <label className="form-label">Đánh giá của bạn *</label>
           <div className="rating-input">
             {[1, 2, 3, 4, 5].map((star) => (
               <Star
@@ -96,13 +96,13 @@ const ReviewForm = ({ productId, onReviewSubmitted }) => {
         {/* Title */}
         <div className="form-group">
           <label className="form-label" htmlFor="review-title">
-            Titre de l'avis *
+            Tiêu đề đánh giá *
           </label>
           <input
             type="text"
             id="review-title"
             className="form-input"
-            placeholder="Résumez votre expérience..."
+            placeholder="Tóm tắt trải nghiệm của bạn..."
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             maxLength={100}
@@ -114,12 +114,12 @@ const ReviewForm = ({ productId, onReviewSubmitted }) => {
         {/* Comment */}
         <div className="form-group">
           <label className="form-label" htmlFor="review-comment">
-            Votre avis *
+            Nội dung đánh giá *
           </label>
           <textarea
             id="review-comment"
             className="form-textarea"
-            placeholder="Partagez votre expérience avec ce parfum..."
+            placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             maxLength={1000}
@@ -131,7 +131,7 @@ const ReviewForm = ({ productId, onReviewSubmitted }) => {
 
         {/* Submit Button */}
         <button type="submit" className="submit-review-btn" disabled={loading}>
-          {loading ? "ENVOI EN COURS..." : "PUBLIER L'AVIS"}
+          {loading ? "ĐANG GỬI..." : "GỬI ĐÁNH GIÁ"}
         </button>
       </form>
     </div>

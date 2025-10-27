@@ -1,37 +1,167 @@
-.filter-form {
-  background-color: #f7f7f7;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 30px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+/* ========================================
+   CHANEL-INSPIRED LUXURY FILTERS
+   ======================================== */
+
+.filters-container {
+  background: #ffffff;
+  border: 1px solid #000000;
+  padding: 0;
+  margin: 30px 0;
 }
 
+.filter-form {
+  display: flex;
+  gap: 0;
+  align-items: center;
+  flex-wrap: nowrap;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+/* Filter Group Styling */
 .filter-group {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-width: 140px;
+  padding: 16px 16px;
+  border-right: 1px solid #000000;
+  position: relative;
+}
+
+.filter-group:last-of-type {
+  border-right: none;
+}
+
+/* Labels - Uppercase & Letter-spaced */
+.filter-label {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #000000;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Input & Select Base Styling */
+.filter-input,
+.filter-select {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 13px;
+  padding: 6px 0;
+  border: none;
+  border-bottom: 1px solid #000000;
+  background: transparent;
+  color: #000000;
+  transition: border-color 0.3s ease;
+  outline: none;
+  border-radius: 0;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.filter-input::placeholder {
+  color: #999999;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+  border-bottom: 2px solid #000000;
+}
+
+.filter-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+  background-size: 16px;
+  padding-right: 20px;
+  cursor: pointer;
+}
+
+/* Price Group Special Layout */
+.price-group {
   min-width: 200px;
-}
-
-.filter-group label {
-  font-weight: 600;
-  margin-bottom: 5px;
-}
-
-.filter-group input,
-.filter-group select {
-  padding: 8px 12px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
 }
 
 .price-inputs {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
+.price-input {
+  flex: 1;
+  width: auto;
+  font-size: 12px;
+}
+
+.price-separator {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  font-weight: 300;
+}
+
+/* Action Buttons */
+.filter-actions {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+  flex: 0 0 auto;
+  margin-top: 0;
+}
+
+.filter-btn {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 16px 24px;
+  border: none;
+  border-left: 1px solid #000000;
+  background: #000000;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 0;
+  white-space: nowrap;
+}
+
+.filter-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.filter-btn:hover {
+  background: #333333;
+  opacity: 1;
+}
+
+.reset-btn {
+  background: #ffffff;
+  color: #000000;
+}
+
+.reset-btn:hover {
+  background: #f5f5f5;
+  opacity: 1;
+}
+
+/* Note options (if needed later) */
 .note-options {
   display: flex;
   flex-wrap: wrap;
@@ -42,29 +172,59 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 14px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-.filter-submit {
-  display: flex;
-  gap: 10px;
-  margin-top: auto;
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .filter-form {
+    flex-direction: column;
+  }
+
+  .filter-group {
+    border-right: none;
+    border-bottom: 1px solid #000000;
+    min-width: 100%;
+  }
+
+  .filter-group:last-of-type {
+    border-bottom: none;
+  }
+
+  .filter-actions {
+    width: 100%;
+  }
+
+  .filter-btn {
+    flex: 1;
+    justify-content: center;
+    border-left: none;
+    border-top: 1px solid #000000;
+  }
+
+  .reset-btn {
+    border-left: 1px solid #000000;
+  }
 }
 
-.filter-submit button {
-  padding: 10px 20px;
-  background-color: #000;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-}
+@media (max-width: 640px) {
+  .price-group {
+    min-width: 100%;
+  }
 
-.filter-submit .reset-btn {
-  background-color: #888;
-}
+  .price-inputs {
+    flex-direction: column;
+    gap: 8px;
+  }
 
-.filter-submit button:hover {
-  opacity: 0.85;
+  .price-separator {
+    display: none;
+  }
+
+  .filter-btn {
+    padding: 20px 24px;
+    font-size: 10px;
+  }
 }

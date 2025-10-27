@@ -13,10 +13,8 @@ import {
 } from "recharts";
 import { TrendingUp, DollarSign, Package, ShoppingCart } from "lucide-react";
 import { showError } from "../utils/toast";
+import api from "../utils/api";
 import "../assets/styles/admin.css";
-
-// Import axios instance đã được cấu hình
-const API_BASE_URL = "http://localhost:5000/api";
 
 const AdminOverview = () => {
   const [stats, setStats] = useState({
@@ -37,49 +35,33 @@ const AdminOverview = () => {
 
         if (!token) {
           console.error("Không tìm thấy token");
+          showError("Vui lòng đăng nhập để truy cập trang admin");
           setLoading(false);
           return;
         }
 
-        const headers = {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        };
-
+        // Sử dụng api instance đã được cấu hình
         const [productsRes, ordersRes, usersRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/products`, {
-            method: "GET",
-            headers,
-          }),
-          fetch(`${API_BASE_URL}/orders`, {
-            method: "GET",
-            headers,
-          }),
-          fetch(`${API_BASE_URL}/users`, {
-            method: "GET",
-            headers,
-          }),
+          api.get("/products"),
+          api.get("/orders"),
+          api.get("/users"),
         ]);
 
-        // Kiểm tra response status
-        if (!productsRes.ok) {
-          throw new Error(`Products API error: ${productsRes.status}`);
-        }
-        if (!ordersRes.ok) {
-          throw new Error(`Orders API error: ${ordersRes.status}`);
-        }
-        if (!usersRes.ok) {
-          throw new Error(`Users API error: ${usersRes.status}`);
-        }
+        // Lấy data từ response
+        const productsData = productsRes.data;
+        const ordersData = ordersRes.data;
+        const usersData = usersRes.data;
 
-        const productsData = await productsRes.json();
-        const ordersData = await ordersRes.json();
-        const usersData = await usersRes.json();
-
-        // API trả về mảng trực tiếp, không có .data
-        const orders = Array.isArray(ordersData) ? ordersData : [];
-        const products = Array.isArray(productsData) ? productsData : [];
-        const users = Array.isArray(usersData) ? usersData : [];
+        // API có thể trả về mảng trực tiếp hoặc object với key data/products
+        const orders = Array.isArray(ordersData)
+          ? ordersData
+          : ordersData.orders || [];
+        const products = Array.isArray(productsData)
+          ? productsData
+          : productsData.products || [];
+        const users = Array.isArray(usersData)
+          ? usersData
+          : usersData.users || [];
 
         console.log("✅ Dữ liệu nhận được:", {
           products: products.length,

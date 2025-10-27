@@ -51,16 +51,16 @@ const WishlistPage = () => {
         <div className="wishlist-header">
           <div className="wishlist-title-section">
             <Heart size={32} className="wishlist-heart-icon" />
-            <h1 className="wishlist-title">MES FAVORIS</h1>
+            <h1 className="wishlist-title">SẢN PHẨM YÊU THÍCH</h1>
           </div>
           <p className="wishlist-count">
             {wishlist.products.length}{" "}
-            {wishlist.products.length === 1 ? "produit" : "produits"}
+            {wishlist.products.length === 1 ? "sản phẩm" : "sản phẩm"}
           </p>
           {wishlist.products.length > 0 && (
             <button className="clear-wishlist-btn" onClick={handleClearAll}>
               <Trash2 size={18} />
-              TOUT SUPPRIMER
+              XÓA TẤT CẢ
             </button>
           )}
         </div>
@@ -68,13 +68,13 @@ const WishlistPage = () => {
         {wishlist.products.length === 0 ? (
           <div className="wishlist-empty">
             <Heart size={64} className="empty-heart-icon" />
-            <h2>VOTRE LISTE EST VIDE</h2>
-            <p>Ajoutez vos parfums préférés pour les retrouver facilement</p>
+            <h2>DANH SÁCH YÊU THÍCH TRỐNG</h2>
+            <p>Thêm các sản phẩm yêu thích để dễ dàng tìm lại sau này</p>
             <button
               className="browse-products-btn"
               onClick={() => navigate("/")}
             >
-              DÉCOUVRIR NOS PARFUMS
+              KHÁM PHÁ SẢN PHẨM
             </button>
           </div>
         ) : (
@@ -84,7 +84,7 @@ const WishlistPage = () => {
                 <button
                   className="remove-from-wishlist-btn"
                   onClick={() => handleRemove(product._id)}
-                  aria-label="Remove from wishlist"
+                  aria-label="Xóa khỏi danh sách yêu thích"
                 >
                   <Heart size={20} fill="currentColor" />
                 </button>
@@ -107,12 +107,12 @@ const WishlistPage = () => {
                   </h3>
                   <p className="wishlist-product-category">
                     {product.category === "Men"
-                      ? "Pour Homme"
+                      ? "Nước hoa nam"
                       : product.category === "Women"
-                      ? "Pour Femme"
+                      ? "Nước hoa nữ"
                       : product.category === "Mini"
-                      ? "Miniature"
-                      : "Coffret Cadeau"}
+                      ? "Bộ sưu tập mini"
+                      : "Hộp quà tặng"}
                   </p>
                   <p className="wishlist-product-price">
                     {formatPrice(product.price)}
@@ -124,7 +124,7 @@ const WishlistPage = () => {
                   onClick={() => handleAddToCart(product)}
                 >
                   <ShoppingBag size={18} />
-                  AJOUTER AU PANIER
+                  THÊM VÀO GIỎ HÀNG
                 </button>
               </div>
             ))}

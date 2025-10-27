@@ -78,7 +78,7 @@ const Rating = ({
 
       {showCount && numReviews !== undefined && (
         <span className="rating-count">
-          ({numReviews} {numReviews === 1 ? "avis" : "avis"})
+          ({numReviews} {numReviews === 1 ? "đánh giá" : "đánh giá"})
         </span>
       )}
     </div>

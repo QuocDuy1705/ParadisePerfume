@@ -7,11 +7,11 @@ const Hero = () => {
       <div className="hero-content">
         <h1>PARADISE</h1>
         <p>
-          The essence of timeless elegance. Discover fragrances that define
-          luxury and sophistication.
+          Tinh hoa của sự thanh lịch vượt thời gian. Khám phá những hương thơm
+          định nghĩa sự sang trọng và tinh tế.
         </p>
         <Link to="/products">
-          <button className="hero-button">EXPLORE COLLECTION</button>
+          <button className="hero-button">KHÁM PHÁ BỘ SƯU TẬP</button>
         </Link>
       </div>
     </section>

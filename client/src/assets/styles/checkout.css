@@ -1,8 +1,11 @@
-/* ===== CHECKOUT PAGE ===== */
+/* ===========================
+   CHECKOUT PAGE - CHANEL LUXURY DESIGN
+   =========================== */
+
 .checkout-page {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 60px 40px 100px;
+  padding: 120px 40px 100px;
   font-family: "Helvetica Neue", Arial, sans-serif;
   background: #fafafa;
   min-height: 100vh;
@@ -82,12 +85,16 @@
 }
 
 .checkout-title {
-  font-size: 18px;
+  font-family: "Didot", "Bodoni MT", "Times New Roman", serif;
+  font-size: 24px;
   font-weight: 300;
-  letter-spacing: 3px;
+  letter-spacing: 4px;
   margin: 0 0 40px 0;
   text-align: left;
+  text-transform: uppercase;
   color: #000;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 20px;
 }
 
 /* ===== FORM SECTIONS ===== */
@@ -261,12 +268,15 @@
 }
 
 .summary-title {
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 2px;
+  font-family: "Didot", "Bodoni MT", "Times New Roman", serif;
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: 3px;
   text-transform: uppercase;
   margin: 0 0 30px 0;
   color: #000;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 20px;
 }
 
 /* ===== SUMMARY ITEMS ===== */

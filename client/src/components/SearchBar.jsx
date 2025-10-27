@@ -21,13 +21,13 @@ const SearchBar = () => {
         <input
           type="text"
           className="search-input"
-          placeholder="Rechercher des parfums..."
+          placeholder="Tìm kiếm nước hoa..."
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
         />
       </div>
       <button type="submit" className="search-btn">
-        RECHERCHER
+        TÌM KIẾM
       </button>
     </form>
   );
