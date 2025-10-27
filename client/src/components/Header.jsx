@@ -1,14 +1,17 @@
-import React, { useContext } from "react";
-import { FaSearch, FaRegStar, FaUser, FaShoppingBag } from "react-icons/fa";
+import React, { useContext, useState } from "react";
+import { FaRegStar, FaUser, FaShoppingBag } from "react-icons/fa";
+import { Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import SearchBar from "./SearchBar";
 
 import "../assets/styles/header.css";
 
 const Header = () => {
   const { user } = useContext(AuthContext);
   const { setIsCartOpen, cart } = useCart();
+  const [showSearch, setShowSearch] = useState(false);
 
   // Calculate total items in cart
   const totalItems =
@@ -35,7 +38,11 @@ const Header = () => {
           </h1>
         </Link>
         <div className="icons">
-          <FaSearch className="icon" />
+          <Search
+            className="icon"
+            onClick={() => setShowSearch(!showSearch)}
+            style={{ cursor: "pointer" }}
+          />
           <FaRegStar className="icon" />
 
           {/* Nếu có user thì về /profile, chưa có thì về /auth */}
@@ -69,6 +76,13 @@ const Header = () => {
           </div>
         </div>
       </div>
+
+      {/* Search Bar Dropdown */}
+      {showSearch && (
+        <div className="search-dropdown">
+          <SearchBar />
+        </div>
+      )}
 
       <nav className="nav">
         <Link to="/" onClick={scrollToTop}>

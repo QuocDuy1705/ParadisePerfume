@@ -25,6 +25,7 @@ const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
 const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
 const VNPayReturn = lazy(() => import("./pages/VNPayReturn"));
 const MoMoReturn = lazy(() => import("./pages/MoMoReturn"));
+const SearchResultsPage = lazy(() => import("./pages/SearchResultsPage"));
 
 // Loading component
 const LoadingSpinner = () => (
@@ -50,6 +51,7 @@ const App = () => {
       <Suspense fallback={<LoadingSpinner />}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/search" element={<SearchResultsPage />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/products" element={<ProductPage />} />
           <Route path="/category/:category" element={<CategoryPage />} />

@@ -1,0 +1,228 @@
+/* Filter Toggle Button (Mobile) */
+.filter-toggle-btn {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #000;
+  color: #fff;
+  border: none;
+  letter-spacing: 1.5px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-toggle-btn:hover {
+  background: #333;
+}
+
+@media (max-width: 768px) {
+  .filter-toggle-btn {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+}
+
+/* Filter Panel */
+.filter-panel {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  padding: 24px;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .filter-panel {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 320px;
+    max-width: 90%;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .filter-panel.open {
+    right: 0;
+  }
+}
+
+/* Filter Header */
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.filter-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+.filter-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #666;
+  transition: color 0.3s ease;
+}
+
+.filter-close-btn:hover {
+  color: #000;
+}
+
+@media (max-width: 768px) {
+  .filter-close-btn {
+    display: block;
+  }
+}
+
+/* Filter Content */
+.filter-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Filter Group */
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: #666;
+  text-transform: uppercase;
+}
+
+/* Filter Select */
+.filter-select {
+  padding: 12px 16px;
+  border: 1px solid #e5e5e5;
+  background: #fff;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #000;
+}
+
+.filter-select:hover {
+  border-color: #999;
+}
+
+/* Price Inputs */
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.filter-input {
+  flex: 1;
+  min-width: 0; /* Prevents flex items from overflowing */
+  padding: 12px 8px;
+  border: 1px solid #e5e5e5;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #000;
+}
+
+.filter-input:hover {
+  border-color: #999;
+}
+
+.filter-input::placeholder {
+  color: #999;
+  letter-spacing: 0.5px;
+}
+
+/* Remove number input arrows */
+.filter-input::-webkit-outer-spin-button,
+.filter-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.filter-input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.price-separator {
+  color: #999;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+/* Reset Button */
+.filter-reset-btn {
+  margin-top: 8px;
+  padding: 12px 20px;
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  letter-spacing: 1.5px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.filter-reset-btn:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* Overlay */
+.filter-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .filter-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+}
