@@ -8,12 +8,14 @@ import {
   LogOut,
   X,
   Home,
+  MessageCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AdminProducts from "./AdminProducts";
 import AdminOrders from "./AdminOrders";
 import AdminOverview from "./AdminOverview";
 import AdminUsers from "./AdminUsers";
+import AdminChat from "./AdminChat";
 import "../assets/styles/admin.css";
 
 const AdminDashboard = () => {
@@ -126,6 +128,15 @@ const AdminDashboard = () => {
             <Users size={20} />
             {!collapsed && <span>Người dùng</span>}
           </button>
+
+          <button
+            onClick={() => setTab("chat")}
+            className={`admin-nav-item ${tab === "chat" ? "active" : ""}`}
+            title="Chat khách hàng"
+          >
+            <MessageCircle size={20} />
+            {!collapsed && <span>Chat</span>}
+          </button>
         </nav>
 
         <div className="sidebar-footer">
@@ -162,6 +173,7 @@ const AdminDashboard = () => {
         {tab === "products" && <AdminProducts />}
         {tab === "orders" && <AdminOrders />}
         {tab === "users" && <AdminUsers />}
+        {tab === "chat" && <AdminChat />}
       </main>
     </div>
   );

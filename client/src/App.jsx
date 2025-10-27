@@ -1,11 +1,18 @@
 import React, { Suspense, lazy } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
+import ChatButton from "./components/ChatButton";
 import { useCart } from "./context/CartContext";
+import { SocketProvider } from "./context/SocketContext";
 import CartSidebar from "./components/CartSidebar";
 
 // Lazy load pages for better performance
@@ -58,69 +65,88 @@ const LoadingSpinner = () => (
   </div>
 );
 
+// Layout wrapper component
+const Layout = ({ children }) => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
+  return (
+    <>
+      {!isAdminRoute && <Header />}
+      {children}
+      {!isAdminRoute && <Footer />}
+    </>
+  );
+};
+
 const App = () => {
   const { isCartOpen } = useCart();
 
   return (
     <Router>
-      <ScrollToTop />
-      <Header />
-      <Suspense fallback={<LoadingSpinner />}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/search" element={<SearchResultsPage />} />
-          <Route path="/wishlist" element={<WishlistPage />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/products" element={<ProductPage />} />
-          <Route path="/category/:category" element={<CategoryPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/men" element={<MenPage />} />
-          <Route path="/women" element={<WomenPage />} />
-          <Route path="/mini" element={<MiniPage />} />
-          <Route path="/giftset" element={<GiftsetPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/order-success" element={<OrderSuccess />} />
-          <Route path="/vnpay-return" element={<VNPayReturn />} />
-          <Route path="/momo-return" element={<MoMoReturn />} />
+      <SocketProvider>
+        <ScrollToTop />
+        <Layout>
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/search" element={<SearchResultsPage />} />
+              <Route path="/wishlist" element={<WishlistPage />} />
+              <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/products" element={<ProductPage />} />
+              <Route path="/category/:category" element={<CategoryPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/men" element={<MenPage />} />
+              <Route path="/women" element={<WomenPage />} />
+              <Route path="/mini" element={<MiniPage />} />
+              <Route path="/giftset" element={<GiftsetPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/order-success" element={<OrderSuccess />} />
+              <Route path="/vnpay-return" element={<VNPayReturn />} />
+              <Route path="/momo-return" element={<MoMoReturn />} />
 
-          {/* Info Pages */}
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/faq" element={<FAQPage />} />
-          <Route path="/shipping" element={<ShippingPage />} />
-          <Route path="/returns" element={<ReturnsPage />} />
-          <Route path="/warranty" element={<WarrantyPage />} />
-          <Route path="/stores" element={<StoresPage />} />
-          <Route path="/careers" element={<CareersPage />} />
-          <Route path="/sustainability" element={<SustainabilityPage />} />
-          <Route path="/how-to-order" element={<HowToOrderPage />} />
-          <Route path="/payment" element={<PaymentPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          <Route path="/terms" element={<TermsPage />} />
-        </Routes>
-      </Suspense>
-      <Footer />
+              {/* Info Pages */}
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/faq" element={<FAQPage />} />
+              <Route path="/shipping" element={<ShippingPage />} />
+              <Route path="/returns" element={<ReturnsPage />} />
+              <Route path="/warranty" element={<WarrantyPage />} />
+              <Route path="/stores" element={<StoresPage />} />
+              <Route path="/careers" element={<CareersPage />} />
+              <Route path="/sustainability" element={<SustainabilityPage />} />
+              <Route path="/how-to-order" element={<HowToOrderPage />} />
+              <Route path="/payment" element={<PaymentPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+            </Routes>
+          </Suspense>
+        </Layout>
 
-      {/* CartSidebar controlled by context */}
-      {isCartOpen && <CartSidebar />}
+        {/* CartSidebar controlled by context */}
+        {isCartOpen && <CartSidebar />}
 
-      {/* Toast Notifications */}
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+        {/* Chat Button */}
+        <ChatButton />
+
+        {/* Toast Notifications */}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={true}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+      </SocketProvider>
     </Router>
   );
 };
