@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext"; // dùng context
+import { showSuccess, showError } from "../utils/toast";
 import "../assets/styles/auth.css";
 import { useNavigate } from "react-router-dom";
 
@@ -36,7 +37,7 @@ const AuthPage = () => {
       // gọi context login
       login(res.data);
 
-      alert("Đăng nhập thành công!");
+      showSuccess("Đăng nhập thành công!");
 
       // Check role
       if (res.data.user.isAdmin) {
@@ -47,7 +48,7 @@ const AuthPage = () => {
 
       console.log("User:", res.data.user);
     } catch (err) {
-      alert(err.response?.data?.message || "Login failed");
+      showError(err.response?.data?.message || "Đăng nhập thất bại!");
     }
   };
 
@@ -64,10 +65,10 @@ const AuthPage = () => {
         password,
       });
 
-      alert("Đăng ký thành công!");
+      showSuccess("Đăng ký thành công! Vui lòng đăng nhập.");
       setActiveTab("login"); // sau khi đăng ký thì chuyển sang login
     } catch (err) {
-      alert(err.response?.data?.message || "Register failed");
+      showError(err.response?.data?.message || "Đăng ký thất bại!");
     }
   };
 

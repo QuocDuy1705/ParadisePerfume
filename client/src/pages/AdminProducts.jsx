@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../utils/api";
 import { Package, Plus, Edit2, Trash2, X } from "lucide-react";
+import { showSuccess, showError } from "../utils/toast";
 import "../assets/styles/admin.css";
 
 const AdminProducts = () => {
@@ -31,7 +32,7 @@ const AdminProducts = () => {
       setProducts(productData);
     } catch (err) {
       console.error("Lỗi khi fetch sản phẩm:", err);
-      alert("Không thể tải danh sách sản phẩm");
+      showError("Không thể tải danh sách sản phẩm");
     } finally {
       setLoading(false);
     }
@@ -61,11 +62,11 @@ const AdminProducts = () => {
         detailUrl: "",
       });
 
-      alert("Thêm sản phẩm thành công!");
+      showSuccess("Thêm sản phẩm thành công!");
       fetchProducts();
     } catch (err) {
       console.error("Lỗi khi tạo sản phẩm:", err);
-      alert(err.response?.data?.message || "Lỗi khi tạo sản phẩm");
+      showError(err.response?.data?.message || "Lỗi khi tạo sản phẩm");
     } finally {
       setLoading(false);
     }
@@ -101,11 +102,11 @@ const AdminProducts = () => {
         detailUrl: "",
       });
 
-      alert("Cập nhật sản phẩm thành công!");
+      showSuccess("Cập nhật sản phẩm thành công!");
       fetchProducts();
     } catch (err) {
       console.error("Lỗi khi update sản phẩm:", err);
-      alert(err.response?.data?.message || "Lỗi khi cập nhật sản phẩm");
+      showError(err.response?.data?.message || "Lỗi khi cập nhật sản phẩm");
     } finally {
       setLoading(false);
     }
@@ -117,11 +118,11 @@ const AdminProducts = () => {
       setLoading(true);
       await api.delete(`/products/${id}`);
 
-      alert("Xóa sản phẩm thành công!");
+      showSuccess("Xóa sản phẩm thành công!");
       fetchProducts();
     } catch (err) {
       console.error("Lỗi khi xoá sản phẩm:", err);
-      alert(err.response?.data?.message || "Lỗi khi xóa sản phẩm");
+      showError(err.response?.data?.message || "Lỗi khi xóa sản phẩm");
     } finally {
       setLoading(false);
     }

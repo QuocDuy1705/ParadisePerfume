@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
-import { FaRegStar, FaUser, FaShoppingBag } from "react-icons/fa";
-import { Search } from "lucide-react";
+import { FaUser, FaShoppingBag } from "react-icons/fa";
+import { Search, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import SearchBar from "./SearchBar";
 
 import "../assets/styles/header.css";
@@ -11,11 +12,15 @@ import "../assets/styles/header.css";
 const Header = () => {
   const { user } = useContext(AuthContext);
   const { setIsCartOpen, cart } = useCart();
+  const { wishlist } = useWishlist();
   const [showSearch, setShowSearch] = useState(false);
 
   // Calculate total items in cart
   const totalItems =
     cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+
+  // Calculate wishlist items
+  const wishlistCount = wishlist?.products?.length || 0;
 
   // Scroll to top function
   const scrollToTop = () => {
@@ -43,7 +48,32 @@ const Header = () => {
             onClick={() => setShowSearch(!showSearch)}
             style={{ cursor: "pointer" }}
           />
-          <FaRegStar className="icon" />
+
+          {/* Wishlist Icon */}
+          <Link
+            to="/wishlist"
+            onClick={scrollToTop}
+            style={{ position: "relative", display: "inline-block" }}
+          >
+            <Heart className="icon" style={{ cursor: "pointer" }} />
+            {wishlistCount > 0 && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: "-5px",
+                  right: "-5px",
+                  backgroundColor: "#ff4757",
+                  color: "white",
+                  borderRadius: "50%",
+                  padding: "2px 6px",
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                }}
+              >
+                {wishlistCount}
+              </span>
+            )}
+          </Link>
 
           {/* Nếu có user thì về /profile, chưa có thì về /auth */}
           <Link to={user ? "/profile" : "/auth"} onClick={scrollToTop}>

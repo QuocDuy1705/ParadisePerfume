@@ -1,0 +1,472 @@
+/* ===================================
+   ORDERS PAGE - CHANEL LUXURY DESIGN
+   =================================== */
+
+.orders-page {
+  min-height: 100vh;
+  background: #fafafa;
+  padding: 80px 0 60px;
+}
+
+.orders-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Loading State */
+.orders-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 20px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e5e5e5;
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.orders-loading p {
+  font-size: 13px;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+/* Header */
+.orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 40px;
+  border-bottom: 2px solid #000;
+  margin-bottom: 50px;
+}
+
+.header-content {
+  flex: 1;
+}
+
+.orders-title {
+  font-family: "Didot", "Bodoni MT", "Playfair Display", serif;
+  font-size: 42px;
+  font-weight: 300;
+  letter-spacing: 4px;
+  margin: 0 0 10px;
+  color: #000;
+}
+
+.orders-subtitle {
+  font-size: 14px;
+  color: #666;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.back-to-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 30px;
+  background: transparent;
+  border: 1px solid #000;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.back-to-profile-btn:hover {
+  background: #000;
+  color: white;
+}
+
+/* Empty State */
+.empty-orders {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 20px;
+  text-align: center;
+  background: white;
+  border: 1px solid #e5e5e5;
+}
+
+.empty-orders svg {
+  color: #ddd;
+  margin-bottom: 30px;
+}
+
+.empty-orders h3 {
+  font-family: "Didot", serif;
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+  color: #000;
+}
+
+.empty-orders p {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 40px;
+}
+
+.shop-btn {
+  padding: 15px 40px;
+  background: #000;
+  color: white;
+  border: 1px solid #000;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.shop-btn:hover {
+  background: white;
+  color: #000;
+}
+
+/* Orders List */
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Order Card */
+.order-detail-card {
+  background: white;
+  border: 1px solid #e5e5e5;
+  padding: 40px;
+  transition: all 0.3s ease;
+}
+
+.order-detail-card:hover {
+  border-color: #000;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Order Header */
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.order-id-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.order-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #999;
+}
+
+.order-number {
+  font-family: "Didot", "Bodoni MT", serif;
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #000;
+}
+
+.order-status-badge {
+  padding: 10px 24px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+
+.status-pending {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.status-processing {
+  background: #cce5ff;
+  color: #004085;
+  border: 1px solid #b8daff;
+}
+
+.status-shipped {
+  background: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.status-delivered,
+.status-completed {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-cancelled {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Order Info */
+.order-card-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 20px;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+}
+
+.info-item svg {
+  color: #666;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.info-item > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #999;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #000;
+  line-height: 1.5;
+}
+
+.info-value.price {
+  font-family: "Didot", serif;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* Order Products */
+.order-products {
+  margin-bottom: 30px;
+  padding: 30px;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+}
+
+.products-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0 0 25px;
+  color: #000;
+}
+
+.products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.product-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background: white;
+  border: 1px solid #e5e5e5;
+  transition: all 0.3s ease;
+}
+
+.product-item:hover {
+  border-color: #000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.product-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border: 1px solid #e5e5e5;
+  flex-shrink: 0;
+}
+
+.product-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.product-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #000;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.product-quantity {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+
+.product-price {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+}
+
+/* Order Summary */
+.order-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 30px;
+  background: #f9f9f9;
+  border: 1px solid #e5e5e5;
+  border-top: 2px solid #000;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.summary-row.total {
+  padding-top: 15px;
+  margin-top: 15px;
+  border-top: 1px solid #ddd;
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+}
+
+.summary-row.total span:last-child {
+  font-family: "Didot", serif;
+  font-size: 24px;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .orders-title {
+    font-size: 36px;
+  }
+
+  .orders-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .back-to-profile-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .order-detail-card {
+    padding: 30px 20px;
+  }
+
+  .order-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .order-card-info {
+    grid-template-columns: 1fr;
+  }
+
+  .order-products {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .orders-page {
+    padding: 60px 0 40px;
+  }
+
+  .orders-title {
+    font-size: 28px;
+    letter-spacing: 3px;
+  }
+
+  .order-detail-card {
+    padding: 20px 15px;
+  }
+
+  .order-number {
+    font-size: 20px;
+  }
+
+  .info-item {
+    padding: 15px;
+  }
+
+  .product-item {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+  }
+
+  .product-image {
+    width: 100%;
+    height: 200px;
+  }
+
+  .order-summary {
+    padding: 20px;
+  }
+
+  .summary-row.total span:last-child {
+    font-size: 20px;
+  }
+}

@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
+import { showSuccess, showWarning, showError } from "../utils/toast";
 import "../assets/styles/home.css";
 
 const API_URL = "http://localhost:5000/api";
@@ -15,7 +16,7 @@ const ProductCard = ({ product }) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
+        showWarning("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
         return;
       }
 
@@ -27,9 +28,10 @@ const ProductCard = ({ product }) => {
 
       await fetchCart();
       setIsCartOpen(true);
+      showSuccess(`Đã thêm ${product.name} vào giỏ hàng!`);
     } catch (err) {
       console.error("Lỗi khi thêm vào giỏ:", err);
-      alert("Không thể thêm vào giỏ hàng. Vui lòng thử lại.");
+      showError("Không thể thêm vào giỏ hàng. Vui lòng thử lại.");
     }
   };
 

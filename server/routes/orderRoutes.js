@@ -48,9 +48,11 @@ router.post("/", verifyToken, async (req, res) => {
 // @access  Private
 router.get("/myorders", verifyToken, async (req, res) => {
   try {
-    const orders = await Order.find({ userId: req.user.id }).sort({
-      createdAt: -1,
-    });
+    const orders = await Order.find({ userId: req.user.id })
+      .populate("items.productId")
+      .sort({
+        createdAt: -1,
+      });
     res.json(orders);
   } catch (err) {
     res.status(500).json({ message: err.message });

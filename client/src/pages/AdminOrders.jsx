@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { showError } from "../utils/toast";
 import {
   ShoppingBag,
   Eye,
@@ -59,7 +60,7 @@ const AdminOrders = () => {
         "❌ Lỗi khi cập nhật trạng thái:",
         err.response?.data || err.message
       );
-      alert("Cập nhật trạng thái thất bại! Xem log console để biết chi tiết.");
+      showError("Cập nhật trạng thái thất bại! Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }

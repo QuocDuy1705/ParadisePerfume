@@ -1,5 +1,7 @@
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
@@ -26,6 +28,7 @@ const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
 const VNPayReturn = lazy(() => import("./pages/VNPayReturn"));
 const MoMoReturn = lazy(() => import("./pages/MoMoReturn"));
 const SearchResultsPage = lazy(() => import("./pages/SearchResultsPage"));
+const WishlistPage = lazy(() => import("./pages/WishlistPage"));
 
 // Loading component
 const LoadingSpinner = () => (
@@ -52,6 +55,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/search" element={<SearchResultsPage />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/products" element={<ProductPage />} />
           <Route path="/category/:category" element={<CategoryPage />} />
@@ -75,6 +79,20 @@ const App = () => {
 
       {/* CartSidebar controlled by context */}
       {isCartOpen && <CartSidebar />}
+
+      {/* Toast Notifications */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </Router>
   );
 };

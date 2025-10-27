@@ -10,6 +10,7 @@ const productSchema = new mongoose.Schema(
     detailUrl: { type: String, required: true },
     notes: [{ type: String }],
     rating: { type: Number, default: 0 }, // 0 - 5
+    numReviews: { type: Number, default: 0 }, // Số lượng reviews
   },
   { timestamps: true }
 );

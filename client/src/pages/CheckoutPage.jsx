@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
+import { showError, showWarning } from "../utils/toast";
 import api from "../utils/api";
 import "../assets/styles/checkout.css";
 
@@ -46,7 +47,7 @@ const CheckoutPage = () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        alert("Vui lòng đăng nhập để tiếp tục!");
+        showWarning("Vui lòng đăng nhập để tiếp tục!");
         navigate("/auth");
         return;
       }
@@ -79,7 +80,7 @@ const CheckoutPage = () => {
           // Chuyển hướng đến VNPay
           window.location.href = res.data.payUrl;
         } else {
-          alert("Không thể tạo liên kết thanh toán VNPay");
+          showError("Không thể tạo liên kết thanh toán VNPay");
         }
       } else if (form.paymentMethod === "momo") {
         // Thanh toán MoMo
@@ -88,7 +89,7 @@ const CheckoutPage = () => {
           // Chuyển hướng đến MoMo
           window.location.href = res.data.payUrl;
         } else {
-          alert("Không thể tạo liên kết thanh toán MoMo");
+          showError("Không thể tạo liên kết thanh toán MoMo");
         }
       } else {
         // Thanh toán COD
@@ -113,7 +114,7 @@ const CheckoutPage = () => {
       }
     } catch (err) {
       console.error("Checkout error:", err.response?.data || err.message);
-      alert(
+      showError(
         err.response?.data?.message || "Đặt hàng thất bại. Vui lòng thử lại!"
       );
     } finally {

@@ -2,7 +2,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
+import { showSuccess, showWarning, showError } from "../utils/toast";
+import Rating from "../components/Rating";
+import ReviewForm from "../components/ReviewForm";
+import ReviewList from "../components/ReviewList";
 import "../assets/styles/productDetails.css";
+import "../assets/styles/reviews.css";
 
 const API_URL = "http://localhost:5000/api";
 
@@ -12,6 +17,7 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState("3.4 FL. OZ.");
   const [quantity, setQuantity] = useState(1);
+  const [refreshReviews, setRefreshReviews] = useState(0);
 
   const { fetchCart, setIsCartOpen } = useCart();
 
@@ -31,7 +37,7 @@ const ProductDetail = () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
+        showWarning("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
         navigate("/auth");
         return;
       }
@@ -44,9 +50,10 @@ const ProductDetail = () => {
 
       await fetchCart();
       setIsCartOpen(true);
+      showSuccess(`Đã thêm ${quantity} ${product.name} vào giỏ hàng!`);
     } catch (err) {
       console.error("Lỗi khi thêm vào giỏ:", err);
-      alert("Không thể thêm vào giỏ hàng. Vui lòng thử lại.");
+      showError("Không thể thêm vào giỏ hàng. Vui lòng thử lại.");
     }
   };
 
@@ -189,6 +196,39 @@ const ProductDetail = () => {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Product Rating Display */}
+      {product.rating > 0 && (
+        <div
+          className="product-rating-summary"
+          style={{
+            marginTop: "40px",
+            textAlign: "center",
+            paddingBottom: "20px",
+            borderBottom: "1px solid #e5e5e5",
+          }}
+        >
+          <Rating
+            rating={product.rating}
+            numReviews={product.numReviews}
+            size={20}
+            showCount={true}
+          />
+        </div>
+      )}
+
+      {/* Reviews Section */}
+      <div
+        className="product-reviews-container"
+        style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}
+      >
+        <ReviewForm
+          productId={product._id}
+          onReviewSubmitted={() => setRefreshReviews((prev) => prev + 1)}
+        />
+
+        <ReviewList productId={product._id} refreshTrigger={refreshReviews} />
       </div>
     </div>
   );

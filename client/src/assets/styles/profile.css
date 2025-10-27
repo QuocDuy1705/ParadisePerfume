@@ -1,0 +1,631 @@
+/* ===================================
+   PROFILE PAGE - CHANEL LUXURY DESIGN
+   =================================== */
+
+.profile-page {
+  min-height: 100vh;
+  background: #fafafa;
+  padding: 80px 0 60px;
+}
+
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Loading State */
+.profile-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 20px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e5e5e5;
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.profile-loading p {
+  font-size: 13px;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+/* Header */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 40px;
+  border-bottom: 2px solid #000;
+  margin-bottom: 40px;
+}
+
+.profile-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-title {
+  font-family: "Didot", "Bodoni MT", "Playfair Display", serif;
+  font-size: 42px;
+  font-weight: 300;
+  letter-spacing: 4px;
+  margin: 0;
+  color: #000;
+}
+
+.profile-subtitle {
+  font-size: 14px;
+  color: #666;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 30px;
+  background: transparent;
+  border: 1px solid #000;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: #000;
+  color: white;
+}
+
+/* Navigation Tabs */
+.profile-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 50px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 30px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: #000;
+  background: #f9f9f9;
+}
+
+.tab-btn.active {
+  color: #000;
+  border-bottom-color: #000;
+  font-weight: 600;
+}
+
+/* Profile Info Section */
+.profile-info-section {
+  background: white;
+  padding: 50px;
+  border: 1px solid #e5e5e5;
+}
+
+.info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-family: "Didot", "Bodoni MT", serif;
+  font-size: 24px;
+  font-weight: 300;
+  letter-spacing: 3px;
+  margin: 0;
+  color: #000;
+}
+
+.edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: white;
+  border: 1px solid #ddd;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-btn:hover {
+  border-color: #000;
+  color: #000;
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+.info-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 25px;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  background: white;
+  border-color: #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.info-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 50%;
+  flex-shrink: 0;
+  color: #000;
+}
+
+.info-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #999;
+}
+
+.info-value {
+  font-size: 15px;
+  font-weight: 400;
+  color: #000;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Account Stats */
+.account-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  padding-top: 40px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 30px;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  background: white;
+  border-color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card svg {
+  color: #000;
+}
+
+.stat-number {
+  font-family: "Didot", serif;
+  font-size: 32px;
+  font-weight: 300;
+  color: #000;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #666;
+}
+
+/* Orders Section */
+.orders-section {
+  background: white;
+  padding: 50px;
+  border: 1px solid #e5e5e5;
+}
+
+.section-header {
+  margin-bottom: 40px;
+}
+
+.section-subtitle {
+  font-size: 13px;
+  color: #666;
+  margin: 10px 0 0;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.empty-state svg {
+  color: #ddd;
+  margin-bottom: 20px;
+}
+
+.empty-state h3 {
+  font-family: "Didot", serif;
+  font-size: 24px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  color: #000;
+}
+
+.empty-state p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.shop-now-btn {
+  padding: 15px 40px;
+  background: #000;
+  color: white;
+  border: 1px solid #000;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.shop-now-btn:hover {
+  background: white;
+  color: #000;
+}
+
+/* Orders List */
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.order-card {
+  background: white;
+  border: 1px solid #e5e5e5;
+  padding: 30px;
+  transition: all 0.3s ease;
+}
+
+.order-card:hover {
+  border-color: #000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.order-id {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.order-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #999;
+}
+
+.order-number {
+  font-family: "Didot", serif;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #000;
+}
+
+.order-status {
+  padding: 8px 20px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+
+.status-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-processing {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.status-shipped {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-delivered,
+.status-completed {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-cancelled {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Order Info */
+.order-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-bottom: 25px;
+}
+
+.order-detail {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #666;
+}
+
+.order-detail svg {
+  color: #999;
+}
+
+.order-total {
+  font-weight: 600;
+  color: #000;
+}
+
+/* Order Items */
+.order-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 20px;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  margin-bottom: 20px;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.order-item-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border: 1px solid #e5e5e5;
+}
+
+.order-item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-item-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #000;
+  margin: 0;
+}
+
+.order-item-quantity {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+.more-items {
+  font-size: 12px;
+  color: #999;
+  font-style: italic;
+  margin: 0;
+  align-self: center;
+}
+
+/* Order Footer */
+.order-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+.view-order-btn {
+  padding: 12px 30px;
+  background: white;
+  border: 1px solid #000;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.view-order-btn:hover {
+  background: #000;
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .profile-title {
+    font-size: 36px;
+  }
+
+  .profile-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tab-btn {
+    padding: 15px 20px;
+    font-size: 11px;
+  }
+
+  .profile-info-section,
+  .orders-section {
+    padding: 30px 20px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .order-info {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-page {
+    padding: 60px 0 40px;
+  }
+
+  .profile-title {
+    font-size: 28px;
+    letter-spacing: 3px;
+  }
+
+  .logout-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tab-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 12px 15px;
+    font-size: 10px;
+  }
+
+  .profile-info-section,
+  .orders-section {
+    padding: 20px 15px;
+  }
+
+  .section-title {
+    font-size: 20px;
+    letter-spacing: 2px;
+  }
+
+  .info-card {
+    padding: 20px;
+  }
+
+  .order-card {
+    padding: 20px;
+  }
+
+  .order-footer {
+    flex-direction: column;
+  }
+
+  .view-order-btn {
+    width: 100%;
+    text-align: center;
+  }
+}

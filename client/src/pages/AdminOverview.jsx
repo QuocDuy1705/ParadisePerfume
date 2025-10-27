@@ -12,6 +12,7 @@ import {
   AreaChart,
 } from "recharts";
 import { TrendingUp, DollarSign, Package, ShoppingCart } from "lucide-react";
+import { showError } from "../utils/toast";
 import "../assets/styles/admin.css";
 
 // Import axios instance đã được cấu hình
@@ -106,7 +107,7 @@ const AdminOverview = () => {
         setRevenueData(monthlyRevenue);
       } catch (err) {
         console.error("❌ Lỗi khi lấy dữ liệu tổng quan:", err);
-        alert("Lỗi khi tải dữ liệu: " + err.message);
+        showError("Lỗi khi tải dữ liệu: " + err.message);
       } finally {
         setLoading(false);
       }
