@@ -52,14 +52,21 @@ export const SocketProvider = ({ children }) => {
       setIsConnected(false);
     });
 
-    // Listen for new messages
+    // Listen for new messages (for unread count only)
+    // Note: AdminChat and ChatBox components handle displaying messages
     newSocket.on("new_message", (message) => {
-      console.log("📨 New message received:", message);
+      console.log("📨 SocketContext: New message received (for unread count)");
+      // Only increment unread if chat is not open
+      // ChatBox/AdminChat will handle message display
       setUnreadCount((prev) => prev + 1);
     });
 
     newSocket.on("new_admin_message", (message) => {
-      console.log("📨 New admin message received:", message);
+      console.log(
+        "📨 SocketContext: New admin message received (for unread count)"
+      );
+      // Only increment unread if chat is not open
+      // ChatBox will handle message display
       setUnreadCount((prev) => prev + 1);
     });
 
@@ -82,8 +89,11 @@ export const SocketProvider = ({ children }) => {
 
   const sendAdminReply = (data) => {
     if (socket && isConnected) {
-      console.log("📤 Sending admin reply:", data);
+      console.log("📤 SocketContext: Sending admin reply:", data);
+      console.log("📤 Emitting to socket with userId:", data.userId);
       socket.emit("admin_reply", data);
+    } else {
+      console.error("❌ Cannot send admin reply - socket not connected");
     }
   };
 

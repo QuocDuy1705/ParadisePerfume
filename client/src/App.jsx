@@ -11,6 +11,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
 import ChatButton from "./components/ChatButton";
+import AdminRoute from "./components/AdminRoute";
 import { useCart } from "./context/CartContext";
 import { SocketProvider } from "./context/SocketContext";
 import CartSidebar from "./components/CartSidebar";
@@ -50,6 +51,18 @@ const HowToOrderPage = lazy(() => import("./pages/HowToOrderPage"));
 const PaymentPage = lazy(() => import("./pages/PaymentPage"));
 const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
+
+// Blog pages
+const BlogPage = lazy(() => import("./pages/BlogPage"));
+const BlogDetail = lazy(() => import("./pages/BlogDetail"));
+const BlogBrands = lazy(() => import("./pages/BlogBrands"));
+const BlogFragranceTypes = lazy(() => import("./pages/BlogFragranceTypes"));
+const BlogHowToChoose = lazy(() => import("./pages/BlogHowToChoose"));
+const BlogPerfumeCare = lazy(() => import("./pages/BlogPerfumeCare"));
+const BlogLuxuryBrands = lazy(() => import("./pages/BlogLuxuryBrands"));
+
+// AI pages
+const AIRecommendation = lazy(() => import("./components/AIRecommendation"));
 
 // Loading component
 const LoadingSpinner = () => (
@@ -98,7 +111,14 @@ const App = () => {
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/orders" element={<Orders />} />
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <AdminDashboard />
+                  </AdminRoute>
+                }
+              />
               <Route path="/men" element={<MenPage />} />
               <Route path="/women" element={<WomenPage />} />
               <Route path="/mini" element={<MiniPage />} />
@@ -109,6 +129,24 @@ const App = () => {
               <Route path="/order-success" element={<OrderSuccess />} />
               <Route path="/vnpay-return" element={<VNPayReturn />} />
               <Route path="/momo-return" element={<MoMoReturn />} />
+
+              {/* AI Recommendation */}
+              <Route path="/ai-recommend" element={<AIRecommendation />} />
+
+              {/* Blog Pages */}
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog/:slug" element={<BlogDetail />} />
+              <Route path="/blog/brands" element={<BlogBrands />} />
+              <Route
+                path="/blog/fragrance-types"
+                element={<BlogFragranceTypes />}
+              />
+              <Route path="/blog/how-to-choose" element={<BlogHowToChoose />} />
+              <Route path="/blog/perfume-care" element={<BlogPerfumeCare />} />
+              <Route
+                path="/blog/luxury-brands"
+                element={<BlogLuxuryBrands />}
+              />
 
               {/* Info Pages */}
               <Route path="/contact" element={<ContactPage />} />

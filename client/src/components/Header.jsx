@@ -43,6 +43,16 @@ const Header = () => {
           </h1>
         </Link>
         <div className="icons">
+          {/* AI Recommendation Button */}
+          <Link
+            to="/ai-recommend"
+            onClick={scrollToTop}
+            className="ai-btn-header"
+          >
+            <span className="ai-icon">🤖</span>
+            <span className="ai-text">AI</span>
+          </Link>
+
           <Search
             className="icon"
             onClick={() => setShowSearch(!showSearch)}
@@ -129,6 +139,9 @@ const Header = () => {
         </Link>
         <Link to="/giftset" onClick={scrollToTop}>
           GIFTSET
+        </Link>
+        <Link to="/blog" onClick={scrollToTop}>
+          BLOG
         </Link>
         <Link to="/about" onClick={scrollToTop}>
           ABOUT PARADISE

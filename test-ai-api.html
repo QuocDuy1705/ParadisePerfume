@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test AI API</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+      }
+      button {
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      .result {
+        background: #f5f5f5;
+        padding: 15px;
+        margin-top: 20px;
+        border-radius: 5px;
+        white-space: pre-wrap;
+      }
+      .success {
+        background: #d4edda;
+        color: #155724;
+      }
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🧪 Test AI API Endpoints</h1>
+
+    <div>
+      <button onclick="testQuiz()">1. Test GET /api/ai/quiz</button>
+      <button onclick="testRecommend()">2. Test POST /api/ai/recommend</button>
+    </div>
+
+    <div id="result" class="result"></div>
+
+    <script>
+      const API_URL = "http://localhost:5000";
+
+      async function testQuiz() {
+        const result = document.getElementById("result");
+        result.textContent = "Loading...";
+        result.className = "result";
+
+        try {
+          const response = await fetch(`${API_URL}/api/ai/quiz`);
+          const data = await response.json();
+
+          result.className = "result success";
+          result.textContent =
+            `✅ SUCCESS (${response.status})\n\n` +
+            JSON.stringify(data, null, 2);
+        } catch (error) {
+          result.className = "result error";
+          result.textContent = `❌ ERROR\n\n${error.message}`;
+        }
+      }
+
+      async function testRecommend() {
+        const result = document.getElementById("result");
+        result.textContent = "Loading...";
+        result.className = "result";
+
+        try {
+          const response = await fetch(`${API_URL}/api/ai/recommend`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              preferences: {
+                gender: "Nam",
+                age: "20-30",
+                occasion: "Đi làm",
+              },
+            }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            result.className = "result success";
+            result.textContent =
+              `✅ SUCCESS (${response.status})\n\n` +
+              JSON.stringify(data, null, 2);
+          } else {
+            result.className = "result error";
+            result.textContent =
+              `❌ HTTP ${response.status}\n\n` + JSON.stringify(data, null, 2);
+          }
+        } catch (error) {
+          result.className = "result error";
+          result.textContent = `❌ ERROR\n\n${error.message}`;
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -9,6 +9,7 @@ import {
   X,
   Home,
   MessageCircle,
+  FileText,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AdminProducts from "./AdminProducts";
@@ -16,6 +17,7 @@ import AdminOrders from "./AdminOrders";
 import AdminOverview from "./AdminOverview";
 import AdminUsers from "./AdminUsers";
 import AdminChat from "./AdminChat";
+import AdminBlogs from "./AdminBlogs";
 import "../assets/styles/admin.css";
 
 const AdminDashboard = () => {
@@ -137,6 +139,15 @@ const AdminDashboard = () => {
             <MessageCircle size={20} />
             {!collapsed && <span>Chat</span>}
           </button>
+
+          <button
+            onClick={() => setTab("blogs")}
+            className={`admin-nav-item ${tab === "blogs" ? "active" : ""}`}
+            title="Quản lý blog"
+          >
+            <FileText size={20} />
+            {!collapsed && <span>Blog</span>}
+          </button>
         </nav>
 
         <div className="sidebar-footer">
@@ -174,6 +185,7 @@ const AdminDashboard = () => {
         {tab === "orders" && <AdminOrders />}
         {tab === "users" && <AdminUsers />}
         {tab === "chat" && <AdminChat />}
+        {tab === "blogs" && <AdminBlogs />}
       </main>
     </div>
   );

@@ -10,7 +10,9 @@ html {
 }
 
 body {
-  font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  /* Chanel font stack: Futura PT → Montserrat (Google Fonts alternative) → Helvetica Neue → sans-serif */
+  font-family: "Montserrat", "Futura PT", "Helvetica Neue", "Helvetica", "Arial",
+    sans-serif;
   margin: 0;
   padding: 0;
   background: #ffffff;
@@ -19,6 +21,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.3px; /* Chanel signature subtle spacing */
   overflow-x: hidden;
 }
 
@@ -73,19 +77,39 @@ button:focus {
   background: #999999;
 }
 
-/* Typography */
+/* Typography - Chanel Style */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-weight: 400;
+  font-family: "Montserrat", "Futura PT", "Helvetica Neue", sans-serif;
+  font-weight: 300; /* Chanel uses light/thin weights */
   line-height: 1.2;
+  letter-spacing: 1px; /* Signature Chanel spacing */
+  text-transform: uppercase; /* Chanel signature uppercase */
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 300;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 400;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 400;
 }
 
 p {
+  font-family: "Jost", "Helvetica Neue", sans-serif;
   line-height: 1.8;
+  font-weight: 300;
 }
 
 /* Utility Classes */

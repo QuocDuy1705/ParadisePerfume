@@ -70,6 +70,15 @@
   margin-right: auto;
 }
 
+/* Hero Buttons Container */
+.hero-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .hero-button {
   padding: 16px 48px;
   background-color: transparent;
@@ -83,6 +92,44 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+}
+
+/* AI Hero Button - Special Gradient Style */
+.ai-hero-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 1.5px solid transparent;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-hero-button::before {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.ai-hero-button:hover {
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+  transform: translateY(-3px);
+}
+
+.ai-btn-icon {
+  font-size: 16px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
 }
 
 .hero-button::before {
@@ -131,10 +178,17 @@
     margin-bottom: 32px;
   }
 
+  .hero-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+
   .hero-button {
     padding: 14px 36px;
     font-size: 10px;
     letter-spacing: 2.5px;
+    width: 100%;
+    max-width: 280px;
   }
 }
 

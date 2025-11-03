@@ -4,7 +4,11 @@ import { Server } from "socket.io";
 import dotenv from "dotenv";
 import cors from "cors";
 import jwt from "jsonwebtoken";
+
+// Load environment variables first
+dotenv.config();
 import connectDB from "./config/db.js";
+import { sanitizeMessage } from "./utils/sanitizer.js";
 import productRoutes from "./routes/productRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -15,9 +19,8 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
-
-// Load environment variables
-dotenv.config();
+import blogRoutes from "./routes/blogRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
 
 console.log("🔑 JWT_SECRET loaded:", process.env.JWT_SECRET ? "YES" : "NO");
 
@@ -42,6 +45,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files (uploads)
+app.use("/uploads", express.static("uploads"));
+
 // Routes
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
@@ -53,6 +59,8 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/blogs", blogRoutes);
+app.use("/api/ai", aiRoutes);
 
 // Health check route
 app.get("/api/health", (req, res) => {
@@ -128,14 +136,7 @@ io.use((socket, next) => {
     console.log("  - Error message:", error.message);
     console.log("  - Token preview:", token.substring(0, 30) + "...");
     console.log("  - JWT_SECRET:", process.env.JWT_SECRET || "NOT SET");
-
-    // For development, allow connection anyway
-    if (process.env.NODE_ENV === "development") {
-      console.log("⚠️ Development mode: Allowing connection without auth");
-      socket.userId = "dev-user";
-      socket.isAdmin = false;
-      return next();
-    }
+    console.log("💡 Solution: Logout and login again to get a new valid token");
 
     return next(new Error("Authentication error: Invalid token"));
   }
@@ -146,7 +147,9 @@ io.on("connection", (socket) => {
   console.log(`✅ User connected: ${socket.userId} (Admin: ${socket.isAdmin})`);
 
   // Join user's personal room
-  socket.join(`user_${socket.userId}`);
+  const userRoom = `user_${socket.userId}`;
+  socket.join(userRoom);
+  console.log(`👤 User joined room: ${userRoom}`);
 
   // If admin, join admin room
   if (socket.isAdmin) {
@@ -169,19 +172,29 @@ io.on("connection", (socket) => {
       const user = await User.findById(socket.userId);
       const userName = user ? `${user.firstName} ${user.lastName}` : "User";
 
+      // Sanitize message
+      let sanitizedMessage;
+      try {
+        sanitizedMessage = sanitizeMessage(data.message);
+      } catch (error) {
+        console.log("❌ Invalid message:", error.message);
+        socket.emit("error", { message: error.message });
+        return;
+      }
+
       // Save message to database
       const newMessage = await Message.create({
         conversationId: data.conversationId,
         senderId: socket.userId,
         senderType: "user",
         senderName: userName,
-        message: data.message,
+        message: sanitizedMessage,
         isRead: false,
       });
 
       // Update conversation
       await Conversation.findByIdAndUpdate(data.conversationId, {
-        lastMessage: data.message,
+        lastMessage: sanitizedMessage.substring(0, 100),
         lastMessageTime: new Date(),
         $inc: { unreadCount: 1 },
       });
@@ -222,24 +235,41 @@ io.on("connection", (socket) => {
         ? `${admin.firstName} ${admin.lastName}`
         : "Admin";
 
+      // Sanitize message
+      let sanitizedMessage;
+      try {
+        sanitizedMessage = sanitizeMessage(data.message);
+      } catch (error) {
+        console.log("❌ Invalid admin message:", error.message);
+        socket.emit("error", { message: error.message });
+        return;
+      }
+
       // Save message to database
       const newMessage = await Message.create({
         conversationId: data.conversationId,
         senderId: socket.userId,
         senderType: "admin",
         senderName: adminName,
-        message: data.message,
+        message: sanitizedMessage,
         isRead: false,
       });
 
       // Update conversation
       await Conversation.findByIdAndUpdate(data.conversationId, {
-        lastMessage: data.message,
+        lastMessage: sanitizedMessage.substring(0, 100),
         lastMessageTime: new Date(),
       });
 
       // Emit to specific user with saved message data
-      io.to(`user_${data.userId}`).emit("new_admin_message", {
+      // Extract userId - handle both string and object formats
+      const userId =
+        typeof data.userId === "object" ? data.userId._id : data.userId;
+      const targetRoom = `user_${userId}`;
+      console.log(`📤 Emitting new_admin_message to room: ${targetRoom}`);
+      console.log(`📤 userId type: ${typeof data.userId}, value:`, data.userId);
+
+      io.to(targetRoom).emit("new_admin_message", {
         _id: newMessage._id,
         conversationId: newMessage.conversationId,
         senderId: newMessage.senderId,
@@ -250,7 +280,7 @@ io.on("connection", (socket) => {
         createdAt: newMessage.createdAt,
       });
 
-      console.log(`✅ Admin reply saved and sent to user_${data.userId}`);
+      console.log(`✅ Admin reply saved and sent to ${targetRoom}`);
     } catch (error) {
       console.error("❌ Error handling admin reply:", error);
       socket.emit("error", { message: "Failed to send reply" });
@@ -259,10 +289,52 @@ io.on("connection", (socket) => {
 
   // Handle typing indicator
   socket.on("typing", (data) => {
-    if (socket.isAdmin) {
-      io.to(`user_${data.userId}`).emit("admin_typing");
-    } else {
-      io.to("admin_room").emit("user_typing", { userId: socket.userId });
+    console.log(
+      `⌨️  User ${socket.userId} is typing in conversation ${data.conversationId}`
+    );
+
+    // User is typing - notify admin room with conversationId
+    io.to("admin_room").emit("user_typing", {
+      userId: socket.userId,
+      conversationId: data.conversationId,
+      isTyping: true,
+    });
+  });
+
+  // Handle stop typing
+  socket.on("stop_typing", (data) => {
+    console.log(`⌨️  User ${socket.userId} stopped typing`);
+
+    // User stopped typing - notify admin room
+    io.to("admin_room").emit("user_typing", {
+      userId: socket.userId,
+      conversationId: data.conversationId,
+      isTyping: false,
+    });
+  });
+
+  // Handle admin typing indicator
+  socket.on("admin_typing", async (data) => {
+    console.log(
+      `⌨️  Admin typing in conversation ${data.conversationId}, isTyping: ${data.isTyping}`
+    );
+
+    try {
+      // Get conversation to find userId
+      const { default: Conversation } = await import(
+        "./models/Conversation.js"
+      );
+      const conversation = await Conversation.findById(data.conversationId);
+
+      if (conversation) {
+        // Notify specific user that admin is typing
+        io.to(`user_${conversation.userId}`).emit("admin_typing", {
+          conversationId: data.conversationId,
+          isTyping: data.isTyping,
+        });
+      }
+    } catch (error) {
+      console.error("Error handling admin typing:", error);
     }
   });
 

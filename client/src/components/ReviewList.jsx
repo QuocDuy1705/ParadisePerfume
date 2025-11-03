@@ -59,7 +59,7 @@ const ReviewList = ({ productId, refreshTrigger }) => {
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
-    return new Date(dateString).toLocaleDateString("fr-FR", options);
+    return new Date(dateString).toLocaleDateString("vi-VN", options);
   };
 
   if (loading && page === 1) {
@@ -103,9 +103,7 @@ const ReviewList = ({ productId, refreshTrigger }) => {
 
                 return (
                   <div key={star} className="rating-bar-row">
-                    <span className="star-label">
-                      {star} étoile{star > 1 ? "s" : ""}
-                    </span>
+                    <span className="star-label">{star} sao</span>
                     <div className="rating-bar">
                       <div
                         className="rating-bar-fill"
@@ -122,7 +120,7 @@ const ReviewList = ({ productId, refreshTrigger }) => {
           {/* Sort Options */}
           <div className="reviews-controls">
             <label htmlFor="sort-select" className="sort-label">
-              TRIER PAR:
+              SẮP XẾP THEO:
             </label>
             <select
               id="sort-select"
@@ -133,11 +131,11 @@ const ReviewList = ({ productId, refreshTrigger }) => {
                 setPage(1);
               }}
             >
-              <option value="newest">Plus récents</option>
-              <option value="oldest">Plus anciens</option>
-              <option value="highest">Note la plus élevée</option>
-              <option value="lowest">Note la plus basse</option>
-              <option value="helpful">Les plus utiles</option>
+              <option value="newest">Mới nhất</option>
+              <option value="oldest">Cũ nhất</option>
+              <option value="highest">Đánh giá cao nhất</option>
+              <option value="lowest">Đánh giá thấp nhất</option>
+              <option value="helpful">Hữu ích nhất</option>
             </select>
           </div>
         </div>
@@ -167,7 +165,7 @@ const ReviewList = ({ productId, refreshTrigger }) => {
                           <CheckCircle
                             size={16}
                             className="verified-badge"
-                            title="Achat vérifié"
+                            title="Đã mua hàng"
                           />
                         )}
                       </div>
@@ -188,7 +186,7 @@ const ReviewList = ({ productId, refreshTrigger }) => {
                     onClick={() => handleMarkHelpful(review._id)}
                   >
                     <ThumbsUp size={16} />
-                    Utile ({review.helpful})
+                    Hữu ích ({review.helpful})
                   </button>
                 </div>
               </div>
@@ -203,17 +201,17 @@ const ReviewList = ({ productId, refreshTrigger }) => {
                 disabled={page === 1}
                 onClick={() => setPage(page - 1)}
               >
-                Précédent
+                Trang trước
               </button>
               <span className="page-info">
-                Page {page} sur {totalPages}
+                Trang {page} / {totalPages}
               </span>
               <button
                 className="pagination-btn"
                 disabled={page === totalPages}
                 onClick={() => setPage(page + 1)}
               >
-                Suivant
+                Trang sau
               </button>
             </div>
           )}

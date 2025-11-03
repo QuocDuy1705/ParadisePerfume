@@ -25,9 +25,26 @@ const messageSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    fileUrl: {
+      type: String,
+      default: null,
+    },
+    fileType: {
+      type: String,
+      enum: ["image", "file", null],
+      default: null,
+    },
+    fileName: {
+      type: String,
+      default: null,
+    },
     isRead: {
       type: Boolean,
       default: false,
+    },
+    readAt: {
+      type: Date,
+      default: null,
     },
   },
   {

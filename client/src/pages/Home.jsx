@@ -3,6 +3,7 @@ import api from "../utils/api";
 import ProductCard from "../components/ProductCard";
 import ProductFilters from "../components/ProductFilters";
 import Hero from "../components/Hero";
+import AIFeatureCard from "../components/AIFeatureCard";
 import "../assets/styles/home.css";
 
 const categories = ["Men", "Women", "Mini", "Giftset"];
@@ -104,6 +105,9 @@ const Home = () => {
       </div>
 
       <ProductFilters onSearch={handleSearch} />
+
+      {/* AI Feature Card */}
+      <AIFeatureCard />
 
       {isFiltering ? (
         <section className="search-results">

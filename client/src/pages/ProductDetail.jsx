@@ -1,8 +1,9 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ChevronRight, Home } from "lucide-react";
+import { ChevronRight, Home, Heart } from "lucide-react";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import { showSuccess, showWarning, showError } from "../utils/toast";
 import Rating from "../components/Rating";
 import ReviewForm from "../components/ReviewForm";
@@ -24,6 +25,10 @@ const ProductDetail = () => {
   const [activeTab, setActiveTab] = useState("description");
 
   const { fetchCart, setIsCartOpen } = useCart();
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+
+  // Check if current product is in wishlist
+  const inWishlist = product?._id ? isInWishlist(product._id) : false;
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -69,6 +74,28 @@ const ProductDetail = () => {
     } catch (err) {
       console.error("Lỗi khi thêm vào giỏ:", err);
       showError("Không thể thêm vào giỏ hàng. Vui lòng thử lại.");
+    }
+  };
+
+  const handleToggleWishlist = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        showWarning("Vui lòng đăng nhập để sử dụng wishlist");
+        navigate("/auth");
+        return;
+      }
+
+      if (inWishlist) {
+        await removeFromWishlist(product._id);
+        showSuccess("Đã xóa khỏi danh sách yêu thích");
+      } else {
+        await addToWishlist(product._id);
+        showSuccess("Đã thêm vào danh sách yêu thích");
+      }
+    } catch (err) {
+      console.error("Lỗi wishlist:", err);
+      showError("Không thể cập nhật wishlist. Vui lòng thử lại.");
     }
   };
 
@@ -208,6 +235,19 @@ const ProductDetail = () => {
           {/* Add to Bag Button */}
           <button className="add-to-bag-btn" onClick={handleAddToCart}>
             Thêm vào giỏ hàng
+          </button>
+
+          {/* Add to Wishlist Button */}
+          <button
+            className={`add-to-wishlist-btn ${inWishlist ? "active" : ""}`}
+            onClick={handleToggleWishlist}
+          >
+            <Heart
+              size={20}
+              fill={inWishlist ? "currentColor" : "none"}
+              strokeWidth={2}
+            />
+            {inWishlist ? "Đã thêm vào yêu thích" : "Thêm vào yêu thích"}
           </button>
 
           {/* Product Features */}
