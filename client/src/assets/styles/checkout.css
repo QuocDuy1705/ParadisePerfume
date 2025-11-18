@@ -510,3 +510,288 @@
     width: 30px;
   }
 }
+
+/* ===========================
+   QR CODE PAYMENT MODAL
+   =========================== */
+
+.qr-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.qr-modal-content {
+  background: #fff;
+  padding: 50px;
+  max-width: 550px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.qr-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 35px;
+  height: 35px;
+  border: 1px solid #000;
+  background: transparent;
+  color: #000;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  padding: 0;
+}
+
+.qr-modal-close:hover {
+  background: #000;
+  color: #fff;
+}
+
+.qr-modal-title {
+  font-family: "Didot", "Bodoni MT", "Times New Roman", serif;
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: 3px;
+  text-align: center;
+  margin: 0 0 35px 0;
+  color: #000;
+  text-transform: uppercase;
+}
+
+.qr-code-container {
+  background: #fafafa;
+  padding: 30px;
+  border: 1px solid #e8e8e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.qr-code-image {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  display: block;
+}
+
+.bank-info-box {
+  background: #fafafa;
+  padding: 25px;
+  border: 1px solid #e8e8e8;
+  margin-bottom: 25px;
+}
+
+.bank-info-box h3 {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0 0 20px 0;
+  color: #000;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 15px;
+}
+
+.bank-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.bank-info-row:last-child {
+  border-bottom: none;
+}
+
+.bank-info-row.highlight {
+  background: #fff;
+  padding: 12px 15px;
+  margin: 8px -10px;
+  border: 1px solid #e0e0e0;
+}
+
+.info-label {
+  font-size: 12px;
+  color: #666;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+.info-value {
+  font-size: 13px;
+  color: #000;
+  font-weight: 400;
+  text-align: right;
+}
+
+.info-value.amount {
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+}
+
+.info-value.content {
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+  letter-spacing: 1px;
+}
+
+.qr-instructions {
+  margin-bottom: 25px;
+}
+
+.qr-instructions h4 {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin: 0 0 15px 0;
+  color: #000;
+}
+
+.qr-instructions ol {
+  margin: 0;
+  padding-left: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qr-instructions li {
+  font-size: 13px;
+  color: #333;
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.qr-instructions strong {
+  font-weight: 500;
+  color: #000;
+}
+
+.warning-note {
+  background: #fff9e6;
+  border: 1px solid #ffd966;
+  padding: 15px;
+  margin-top: 15px;
+  font-size: 12px;
+  color: #856404;
+  line-height: 1.5;
+}
+
+.warning-note strong {
+  font-weight: 600;
+  color: #000;
+}
+
+.btn-confirm-paid {
+  width: 100%;
+  padding: 18px;
+  background: #000;
+  color: #fff;
+  border: none;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-confirm-paid:hover {
+  background: #333;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* QR Modal Responsive */
+@media (max-width: 768px) {
+  .qr-modal-content {
+    padding: 35px 25px;
+    max-width: 95%;
+  }
+
+  .qr-modal-title {
+    font-size: 18px;
+    letter-spacing: 2px;
+  }
+
+  .qr-code-container {
+    padding: 20px;
+  }
+
+  .qr-code-image {
+    max-width: 250px;
+  }
+
+  .bank-info-box {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .qr-modal-content {
+    padding: 25px 20px;
+  }
+
+  .qr-modal-title {
+    font-size: 16px;
+    letter-spacing: 1.5px;
+    margin-bottom: 25px;
+  }
+
+  .qr-code-image {
+    max-width: 220px;
+  }
+
+  .bank-info-row {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .info-value {
+    text-align: left;
+  }
+}

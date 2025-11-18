@@ -1,505 +1,262 @@
-import axios from "axios";
-import crypto from "crypto";
-import querystring from "querystring";
 import Cart from "../models/Cart.js";
 import Order from "../models/Order.js";
 
-// Helper function to sort object keys for VNPay
-function sortObject(obj) {
-  const sorted = {};
-  const keys = Object.keys(obj).sort();
-  keys.forEach((key) => {
-    sorted[key] = obj[key];
-  });
-  return sorted;
-}
+/**
+ * Payment Controller - QR Code TP Bank & COD
+ * Hệ thống thanh toán: QR Code ngân hàng TP Bank + COD
+ */
 
-// Helper function to get client IP
-function getClientIp(req) {
-  const forwarded = req.headers["x-forwarded-for"];
-  const ip = forwarded
-    ? forwarded.split(",")[0]
-    : req.connection.remoteAddress || req.socket.remoteAddress;
+// ==================== TP Bank QR Code Payment ====================
 
-  // Clean up IPv6 localhost
-  if (ip === "::1" || ip === "::ffff:127.0.0.1") {
-    return "127.0.0.1";
-  }
-
-  // Remove IPv6 prefix if present
-  return ip.replace("::ffff:", "");
-}
-
-// ==================== VNPay Payment ====================
-
-export const createVNPayUrl = async (req, res) => {
+/**
+ * Tạo đơn hàng với phương thức thanh toán QR Bank
+ * @route POST /api/payment/create-bank-order
+ */
+export const createBankOrder = async (req, res) => {
   try {
     const { shippingAddress, note, shippingFee, items, totalPrice } = req.body;
 
-    console.log("📦 VNPay request body:", {
-      shippingAddress,
-      note,
-      shippingFee,
-      items: items,
+    console.log("🏦 Bank QR Payment request:", {
+      userId: req.user.id,
       totalPrice,
+      itemsCount: items?.length,
     });
 
     // Validate items
     if (!items || items.length === 0) {
-      console.error("❌ Items validation failed:", items);
-      return res.status(400).json({ message: "Giỏ hàng trống" });
+      return res.status(400).json({
+        success: false,
+        message: "Giỏ hàng trống",
+      });
     }
 
     // Validate totalPrice
     if (!totalPrice || totalPrice <= 0) {
-      console.error("❌ TotalPrice validation failed:", totalPrice);
-      return res.status(400).json({ message: "Tổng tiền không hợp lệ" });
+      return res.status(400).json({
+        success: false,
+        message: "Tổng tiền không hợp lệ",
+      });
     }
 
     const total = Math.round(totalPrice);
 
-    const orderId = `VNP${req.user.id}${Date.now()}`;
+    // Generate unique order ID
+    const orderNumber = `ORD${Date.now()}`;
 
-    // VNPay requires OrderInfo without special characters and spaces
-    const orderInfo = `Thanh toan don hang ${orderId}`
-      .replace(/[^a-zA-Z0-9 ]/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
-
-    // VNPay config
-    const tmnCode = process.env.VNPAY_TMN_CODE;
-    const secretKey = process.env.VNPAY_HASH_SECRET;
-
-    console.log("🔑 VNPay credentials check:", {
-      hasTmnCode: !!tmnCode,
-      tmnCodeLength: tmnCode?.length,
-      tmnCodeValue: tmnCode,
-      hasSecretKey: !!secretKey,
-      secretKeyLength: secretKey?.length,
-      secretKeyValue: secretKey?.substring(0, 10) + "...", // Chỉ show 10 ký tự đầu
-    });
-
-    if (
-      !tmnCode ||
-      !secretKey ||
-      tmnCode === "YOUR_TMN_CODE" ||
-      tmnCode === "YOUR_TMN_CODE_HERE"
-    ) {
-      console.error("⚠️  VNPay credentials not configured!");
-      console.error("\n🔴 CREDENTIALS DEMO KHÔNG HOẠT ĐỘNG!");
-      console.error("   Bạn PHẢI đăng ký tài khoản riêng tại:");
-      console.error("   👉 https://sandbox.vnpayment.vn/");
-      console.error("\n📖 Xem hướng dẫn chi tiết tại: VNPAY_SETUP.md");
-      return res.status(500).json({
-        message: "VNPay chưa được cấu hình đúng.",
-        error:
-          "Credentials demo không hoạt động. Vui lòng đăng ký tài khoản tại https://sandbox.vnpayment.vn/",
-        guide: "Xem file VNPAY_SETUP.md để biết cách đăng ký và cấu hình",
-      });
-    }
-
-    if (secretKey === "YOUR_32_CHARACTER_HASH_SECRET_HERE") {
-      console.error("⚠️  Hash Secret chưa được cập nhật!");
-      console.error("   Vui lòng lấy Hash Secret từ VNPay Sandbox");
-      return res.status(500).json({
-        message: "Hash Secret chưa được cấu hình",
-        error:
-          "Vui lòng đăng nhập https://sandbox.vnpayment.vn/merchantv2/ và lấy Hash Secret",
-      });
-    }
-
-    // Validate Hash Secret format (32 characters alphanumeric)
-    if (secretKey.length !== 32 || !/^[A-Z0-9]+$/.test(secretKey)) {
-      console.error("❌ VNPAY_HASH_SECRET sai định dạng!");
-      console.error("   - Phải có đúng 32 ký tự");
-      console.error("   - Chỉ chứa chữ IN HOA và số (A-Z, 0-9)");
-      console.error("   - Hiện tại:", secretKey);
-      return res.status(500).json({
-        message:
-          "VNPAY_HASH_SECRET sai định dạng. Vui lòng kiểm tra lại trong file .env",
-      });
-    }
-
-    const vnpUrl =
-      process.env.VNPAY_HOST ||
-      "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    const returnUrl = `${process.env.SERVER_URL}/api/payment/vnpay-return`;
-
-    const date = new Date();
-    const createDate =
-      date.getFullYear() +
-      String(date.getMonth() + 1).padStart(2, "0") +
-      String(date.getDate()).padStart(2, "0") +
-      String(date.getHours()).padStart(2, "0") +
-      String(date.getMinutes()).padStart(2, "0") +
-      String(date.getSeconds()).padStart(2, "0");
-
-    let vnp_Params = {
-      vnp_Version: "2.1.0",
-      vnp_Command: "pay",
-      vnp_TmnCode: tmnCode,
-      vnp_Locale: "vn",
-      vnp_CurrCode: "VND",
-      vnp_TxnRef: orderId,
-      vnp_OrderInfo: orderInfo,
-      vnp_OrderType: "other",
-      vnp_Amount: Math.round(total * 100), // VNPay requires amount in smallest currency unit (VND * 100)
-      vnp_ReturnUrl: returnUrl,
-      vnp_IpAddr: getClientIp(req),
-      vnp_CreateDate: createDate,
-    };
-
-    console.log("💳 VNPay params before sorting:", {
-      vnp_Version: "2.1.0",
-      vnp_Command: "pay",
-      vnp_TmnCode: tmnCode,
-      vnp_Amount: Math.round(total * 100),
-      vnp_TxnRef: orderId,
-      vnp_OrderInfo: orderInfo,
-      vnp_OrderType: "other",
-      vnp_IpAddr: getClientIp(req),
-      vnp_CreateDate: createDate,
-      vnp_ReturnUrl: returnUrl,
-      vnp_Locale: "vn",
-      vnp_CurrCode: "VND",
-    });
-
-    vnp_Params = sortObject(vnp_Params);
-
-    // Clean params - remove any undefined or null values and convert to string
-    const cleanParams = {};
-    Object.keys(vnp_Params).forEach((key) => {
-      if (vnp_Params[key] !== undefined && vnp_Params[key] !== null) {
-        cleanParams[key] = String(vnp_Params[key]);
-      }
-    });
-
-    console.log("🔄 VNPay params after sorting:", cleanParams);
-
-    // Create signData WITHOUT URL encoding (VNPay requirement)
-    const sortedKeys = Object.keys(cleanParams).sort();
-    const signDataParts = sortedKeys.map((key) => {
-      return `${key}=${cleanParams[key]}`;
-    });
-    const signData = signDataParts.join("&");
-
-    console.log("📝 SignData (NO URL encoding):", signData);
-
-    const hmac = crypto.createHmac("sha512", secretKey);
-    const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
-
-    console.log("🔐 SecureHash:", signed);
-    console.log("\n⚠️  KIỂM TRA:");
-    console.log(
-      "1. Hash Secret đúng không? Lấy từ: https://sandbox.vnpayment.vn/merchantv2/"
-    );
-    console.log("2. TMN Code:", tmnCode);
-    console.log("3. Hash Secret hiện tại:", secretKey);
-    console.log("\n🔴 NẾU BẠN THẤY LỖI 'SAI CHỮ KÝ' (Error Code 97):");
-    console.log("   → Hash Secret CHẮC CHẮN SAI!");
-    console.log(
-      "   → Credentials demo 5XSNTFQU/AJ57CUKLGZ... KHÔNG HOẠT ĐỘNG!"
-    );
-    console.log(
-      "   → Bạn PHẢI đăng ký tài khoản mới tại: https://sandbox.vnpayment.vn/"
-    );
-    console.log("   → Xem hướng dẫn: VNPAY_SETUP.md");
-    console.log(
-      "\n4. Test thủ công tại: https://sandbox.vnpayment.vn/apis/vnpay-demo/"
-    );
-
-    cleanParams["vnp_SecureHash"] = signed;
-
-    // Build final payment URL
-    const finalParams = { ...cleanParams };
-    const urlParts = Object.keys(finalParams).map((key) => {
-      return `${key}=${encodeURIComponent(finalParams[key])}`;
-    });
-    const payUrl = vnpUrl + "?" + urlParts.join("&");
-
-    console.log("🔗 VNPay payment URL generated");
-    console.log("🌐 Full URL length:", payUrl.length);
-    console.log("\n📋 URL đầy đủ để test:");
-    console.log(payUrl);
-    console.log("\n✅ Các bước test:");
-    console.log("1. Copy URL trên");
-    console.log("2. Mở trình duyệt mới (Incognito mode)");
-    console.log("3. Paste URL vào address bar");
-    console.log("4. Thông tin test VNPay Sandbox:");
-    console.log("   - Số thẻ: 9704198526191432198");
-    console.log("   - Tên chủ thẻ: NGUYEN VAN A");
-    console.log("   - Ngày phát hành: 07/15");
-    console.log("   - Mã OTP: 123456");
-
-    // Validate URL is not too long (VNPay limit ~4000 chars)
-    if (payUrl.length > 4000) {
-      console.error("❌ URL too long:", payUrl.length);
-      return res.status(400).json({ message: "URL quá dài, vui lòng thử lại" });
-    }
-
-    // Save pending order - use items from request
-    const tempOrder = new Order({
+    // Create order with bank_transfer status
+    const newOrder = new Order({
+      orderNumber,
       userId: req.user.id,
-      items: items.map((i) => ({
-        productId: i.productId,
-        quantity: i.quantity,
-        price: i.price || 0,
+      items: items.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
       })),
       totalPrice: total,
-      shippingFee: shippingFee || 30000,
       shippingAddress,
-      note,
-      paymentMethod: "vnpay",
-      paymentStatus: "pending",
+      paymentMethod: "bank_transfer",
+      isPaid: false,
       status: "pending",
-      transactionId: orderId,
     });
 
-    await tempOrder.save();
+    await newOrder.save();
 
-    res.json({ payUrl, orderId });
-  } catch (error) {
-    console.error("VNPay error:", error);
-    res
-      .status(500)
-      .json({ message: "Lỗi tạo thanh toán VNPay", error: error.message });
-  }
-};
+    console.log("✅ Order created:", orderNumber);
 
-export const vnpayReturn = async (req, res) => {
-  try {
-    let vnp_Params = req.query;
-    const secureHash = vnp_Params["vnp_SecureHash"];
-
-    delete vnp_Params["vnp_SecureHash"];
-    delete vnp_Params["vnp_SecureHashType"];
-
-    vnp_Params = sortObject(vnp_Params);
-
-    const secretKey = process.env.VNPAY_HASH_SECRET || "YOUR_HASH_SECRET";
-    const signData = querystring.stringify(vnp_Params, { encode: false });
-    const hmac = crypto.createHmac("sha512", secretKey);
-    const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
-
-    const { vnp_ResponseCode, vnp_TxnRef, vnp_TransactionNo } = vnp_Params;
-
-    if (secureHash === signed) {
-      if (vnp_ResponseCode === "00") {
-        const order = await Order.findOne({ transactionId: vnp_TxnRef });
-
-        if (order) {
-          order.paymentStatus = "paid";
-          order.status = "confirmed";
-          order.transactionId = vnp_TransactionNo;
-          await order.save();
-
-          await Cart.findOneAndDelete({ userId: order.userId });
-
-          return res.redirect(
-            `${process.env.FRONTEND_URL}/vnpay-return?orderId=${order._id}&vnp_ResponseCode=00`
-          );
-        }
-      } else {
-        const order = await Order.findOne({ transactionId: vnp_TxnRef });
-        if (order) {
-          order.paymentStatus = "failed";
-          order.status = "cancelled";
-          await order.save();
-        }
-        return res.redirect(
-          `${process.env.FRONTEND_URL}/vnpay-return?vnp_ResponseCode=${vnp_ResponseCode}`
-        );
-      }
-    } else {
-      return res.redirect(
-        `${process.env.FRONTEND_URL}/checkout?payment=invalid`
-      );
-    }
-  } catch (error) {
-    console.error("VNPay return error:", error);
-    res.redirect(`${process.env.FRONTEND_URL}/checkout?payment=error`);
-  }
-};
-
-// ==================== MoMo Payment ====================
-
-export const createMoMoPayment = async (req, res) => {
-  try {
-    const { shippingAddress, note, shippingFee, items, totalPrice } = req.body;
-
-    // Validate items
-    if (!items || items.length === 0) {
-      return res.status(400).json({ message: "Giỏ hàng trống" });
-    }
-
-    const total = totalPrice || 0;
-
-    const orderId = `MOMO${req.user.id}${Date.now()}`;
-    const requestId = orderId;
-
-    const orderInfo = `Thanh toan don hang ${orderId}`;
-    const returnUrl = `${process.env.SERVER_URL}/api/payment/momo-return`;
-    const notifyUrl = `${process.env.SERVER_URL}/api/payment/momo-notify`;
-    const partnerCode = process.env.MOMO_PARTNER_CODE || "MOMO";
-    const accessKey = process.env.MOMO_ACCESS_KEY || "YOUR_ACCESS_KEY";
-    const secretKey = process.env.MOMO_SECRET_KEY || "YOUR_SECRET_KEY";
-    const requestType = "captureWallet";
-    const extraData = "";
-
-    const rawSignature = `accessKey=${accessKey}&amount=${total}&extraData=${extraData}&ipnUrl=${notifyUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${returnUrl}&requestId=${requestId}&requestType=${requestType}`;
-
-    const signature = crypto
-      .createHmac("sha256", secretKey)
-      .update(rawSignature)
-      .digest("hex");
-
-    const requestBody = {
-      partnerCode,
-      accessKey,
-      requestId,
+    // Generate QR Code data (VietQR format)
+    const qrData = {
+      accountNo: process.env.BANK_ACCOUNT_NUMBER || "0123456789",
+      accountName: process.env.BANK_ACCOUNT_NAME || "PARADISE PERFUME",
+      bankBin: process.env.BANK_BIN || "970423", // TP Bank BIN
       amount: total,
-      orderId,
-      orderInfo,
-      redirectUrl: returnUrl,
-      ipnUrl: notifyUrl,
-      requestType,
-      extraData,
-      lang: "vi",
-      signature,
+      description: `${orderNumber}`,
+      template: "compact", // or "compact2", "qr_only", "print"
     };
 
-    const tempOrder = new Order({
-      userId: req.user.id,
-      items: items.map((i) => ({
-        productId: i.productId,
-        quantity: i.quantity,
-        price: i.price || 0,
-      })),
-      totalPrice: total,
-      shippingFee: shippingFee || 30000,
-      shippingAddress,
-      note,
-      paymentMethod: "momo",
-      paymentStatus: "pending",
-      status: "pending",
-      transactionId: orderId,
+    // Generate VietQR URL
+    const qrCodeUrl = `https://img.vietqr.io/image/${qrData.bankBin}-${
+      qrData.accountNo
+    }-${qrData.template}.png?amount=${
+      qrData.amount
+    }&addInfo=${encodeURIComponent(
+      qrData.description
+    )}&accountName=${encodeURIComponent(qrData.accountName)}`;
+
+    // Clear cart after order created
+    await Cart.findOneAndDelete({ user: req.user.id });
+
+    res.json({
+      success: true,
+      message: "Tạo đơn hàng thành công",
+      data: {
+        orderId: newOrder._id,
+        orderNumber: newOrder.orderNumber,
+        qrCodeUrl,
+        bankInfo: {
+          bankName: "TP Bank",
+          accountNumber: qrData.accountNo,
+          accountName: qrData.accountName,
+          amount: total,
+          content: orderNumber,
+        },
+      },
     });
-
-    await tempOrder.save();
-
-    const momoEndpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
-    const response = await axios.post(momoEndpoint, requestBody, {
-      headers: { "Content-Type": "application/json" },
-    });
-
-    if (response.data && response.data.payUrl) {
-      res.json({
-        payUrl: response.data.payUrl,
-        orderId,
-        message: "Tạo thanh toán MoMo thành công",
-      });
-    } else {
-      res.status(400).json({
-        message: "Lỗi tạo thanh toán MoMo",
-        error: response.data,
-      });
-    }
   } catch (error) {
-    console.error("MoMo payment error:", error);
+    console.error("❌ Create bank order error:", error);
     res.status(500).json({
-      message: "Lỗi tạo thanh toán MoMo",
+      success: false,
+      message: "Lỗi tạo đơn hàng",
       error: error.message,
     });
   }
 };
 
-export const momoNotify = async (req, res) => {
+/**
+ * Xác nhận thanh toán (Admin sẽ check và confirm)
+ * @route POST /api/payment/confirm-payment/:orderId
+ */
+export const confirmPayment = async (req, res) => {
   try {
-    const {
-      orderId,
-      requestId,
-      amount,
-      orderInfo,
-      orderType,
-      transId,
-      resultCode,
-      message,
-      payType,
-      responseTime,
-      extraData,
-      signature,
-    } = req.body;
+    const { orderId } = req.params;
 
-    console.log("MoMo IPN received:", req.body);
+    const order = await Order.findById(orderId);
 
-    const secretKey = process.env.MOMO_SECRET_KEY || "YOUR_SECRET_KEY";
-    const accessKey = process.env.MOMO_ACCESS_KEY || "YOUR_ACCESS_KEY";
-
-    const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&message=${message}&orderId=${orderId}&orderInfo=${orderInfo}&orderType=${orderType}&partnerCode=${process.env.MOMO_PARTNER_CODE}&payType=${payType}&requestId=${requestId}&responseTime=${responseTime}&resultCode=${resultCode}&transId=${transId}`;
-
-    const expectedSignature = crypto
-      .createHmac("sha256", secretKey)
-      .update(rawSignature)
-      .digest("hex");
-
-    if (signature === expectedSignature) {
-      const order = await Order.findOne({ transactionId: orderId });
-
-      if (order) {
-        if (resultCode === 0) {
-          order.paymentStatus = "paid";
-          order.status = "confirmed";
-          order.transactionId = transId;
-          await order.save();
-
-          await Cart.findOneAndDelete({ userId: order.userId });
-        } else {
-          order.paymentStatus = "failed";
-          order.status = "cancelled";
-          await order.save();
-        }
-      }
-
-      return res.status(200).json({ resultCode: 0, message: "Success" });
-    } else {
-      return res
-        .status(400)
-        .json({ resultCode: 97, message: "Invalid signature" });
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy đơn hàng",
+      });
     }
+
+    // Update payment status
+    order.isPaid = true;
+    order.paidAt = new Date();
+    order.status = "paid";
+    await order.save();
+
+    console.log("✅ Payment confirmed for order:", order.orderNumber);
+
+    res.json({
+      success: true,
+      message: "Xác nhận thanh toán thành công",
+      data: order,
+    });
   } catch (error) {
-    console.error("MoMo IPN error:", error);
-    return res.status(500).json({ resultCode: 99, message: "System error" });
+    console.error("❌ Confirm payment error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Lỗi xác nhận thanh toán",
+      error: error.message,
+    });
   }
 };
 
-export const momoReturn = async (req, res) => {
+/**
+ * Kiểm tra trạng thái thanh toán
+ * @route GET /api/payment/check-status/:orderId
+ */
+export const checkPaymentStatus = async (req, res) => {
   try {
-    const { orderId, resultCode, message } = req.query;
+    const { orderId } = req.params;
 
-    console.log("MoMo return:", req.query);
+    const order = await Order.findById(orderId);
 
-    if (resultCode === "0") {
-      const order = await Order.findOne({ transactionId: orderId });
-
-      if (order) {
-        return res.redirect(
-          `${process.env.FRONTEND_URL}/momo-return?orderId=${order._id}&resultCode=0`
-        );
-      }
-      return res.redirect(
-        `${process.env.FRONTEND_URL}/momo-return?resultCode=0`
-      );
-    } else {
-      return res.redirect(
-        `${
-          process.env.FRONTEND_URL
-        }/momo-return?resultCode=${resultCode}&message=${encodeURIComponent(
-          message || ""
-        )}`
-      );
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy đơn hàng",
+      });
     }
+
+    res.json({
+      success: true,
+      data: {
+        orderNumber: order.orderNumber,
+        paymentStatus: order.isPaid ? "paid" : "pending",
+        orderStatus: order.status,
+        totalAmount: order.totalPrice,
+        createdAt: order.createdAt,
+      },
+    });
   } catch (error) {
-    console.error("MoMo return error:", error);
-    res.redirect(`${process.env.FRONTEND_URL}/checkout?payment=error`);
+    console.error("❌ Check payment status error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Lỗi kiểm tra trạng thái",
+      error: error.message,
+    });
+  }
+};
+
+// ==================== COD Payment ====================
+
+/**
+ * Tạo đơn hàng COD
+ * @route POST /api/payment/create-cod-order
+ */
+export const createCODOrder = async (req, res) => {
+  try {
+    const { shippingAddress, note, shippingFee, items, totalPrice } = req.body;
+
+    console.log("💵 COD Payment request:", {
+      userId: req.user.id,
+      totalPrice,
+      itemsCount: items?.length,
+    });
+
+    // Validate
+    if (!items || items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Giỏ hàng trống",
+      });
+    }
+
+    if (!totalPrice || totalPrice <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Tổng tiền không hợp lệ",
+      });
+    }
+
+    const total = Math.round(totalPrice);
+    const orderNumber = `ORD${Date.now()}`;
+
+    // Create COD order
+    const newOrder = new Order({
+      orderNumber,
+      userId: req.user.id,
+      items: items.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      })),
+      totalPrice: total,
+      shippingAddress,
+      paymentMethod: "cod",
+      isPaid: false,
+      status: "pending",
+    });
+
+    await newOrder.save();
+
+    console.log("✅ COD Order created:", orderNumber);
+
+    // Clear cart
+    await Cart.findOneAndDelete({ user: req.user.id });
+
+    res.json({
+      success: true,
+      message: "Đặt hàng thành công",
+      data: {
+        orderId: newOrder._id,
+        orderNumber: newOrder.orderNumber,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Create COD order error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Lỗi tạo đơn hàng COD",
+      error: error.message,
+    });
   }
 };

@@ -1,22 +1,20 @@
 import express from "express";
 import {
-  createVNPayUrl,
-  vnpayReturn,
-  createMoMoPayment,
-  momoNotify,
-  momoReturn,
+  createBankOrder,
+  createCODOrder,
+  confirmPayment,
+  checkPaymentStatus,
 } from "../controllers/paymentController.js";
 import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// VNPay routes
-router.post("/vnpay", verifyToken, createVNPayUrl);
-router.get("/vnpay-return", vnpayReturn);
+// TP Bank QR Code Payment Routes
+router.post("/create-bank-order", verifyToken, createBankOrder);
+router.post("/confirm-payment/:orderId", verifyToken, confirmPayment);
+router.get("/check-status/:orderId", verifyToken, checkPaymentStatus);
 
-// MoMo routes
-router.post("/momo", verifyToken, createMoMoPayment);
-router.post("/momo-notify", momoNotify);
-router.get("/momo-return", momoReturn);
+// COD Payment Route
+router.post("/create-cod-order", verifyToken, createCODOrder);
 
 export default router;

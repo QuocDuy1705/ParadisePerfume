@@ -9,6 +9,8 @@ const CheckoutPage = () => {
   const { cart } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [qrData, setQRData] = useState(null);
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -55,8 +57,10 @@ const CheckoutPage = () => {
       const orderData = {
         items: cart.items.map((item) => ({
           productId: item.product._id,
+          name: item.product.name,
           quantity: item.quantity,
           price: item.product.price,
+          image: item.product.image,
         })),
         shippingAddress: {
           fullName: form.fullName,
@@ -67,40 +71,32 @@ const CheckoutPage = () => {
           district: form.district,
         },
         note: form.note,
-        paymentMethod: form.paymentMethod,
         totalPrice: finalTotal,
         shippingFee,
       };
 
       // Xử lý theo phương thức thanh toán
-      if (form.paymentMethod === "vnpay") {
-        // Thanh toán VNPay
-        const res = await api.post("/payment/vnpay", orderData);
-        if (res.data.payUrl) {
-          // Chuyển hướng đến VNPay
-          window.location.href = res.data.payUrl;
+      if (form.paymentMethod === "bank_transfer") {
+        // Thanh toán qua TP Bank QR Code
+        const res = await api.post("/payment/create-bank-order", orderData);
+
+        if (res.data.success) {
+          // Hiển thị QR Code modal
+          setQRData(res.data.data);
+          setShowQRModal(true);
         } else {
-          showError("Không thể tạo liên kết thanh toán VNPay");
-        }
-      } else if (form.paymentMethod === "momo") {
-        // Thanh toán MoMo
-        const res = await api.post("/payment/momo", orderData);
-        if (res.data.payUrl) {
-          // Chuyển hướng đến MoMo
-          window.location.href = res.data.payUrl;
-        } else {
-          showError("Không thể tạo liên kết thanh toán MoMo");
+          showError("Không thể tạo mã QR thanh toán");
         }
       } else {
         // Thanh toán COD
-        const res = await api.post("/orders", orderData);
-        console.log("Order created:", res.data);
+        const res = await api.post("/payment/create-cod-order", orderData);
+        console.log("COD Order created:", res.data);
 
-        // Điều hướng sang trang success với thông tin đầy đủ
-        // KHÔNG clear cart ở đây để tránh useEffect redirect
+        // Điều hướng sang trang success
         navigate("/order-success", {
           state: {
-            orderId: res.data.order?._id,
+            orderId: res.data.data.orderId,
+            orderNumber: res.data.data.orderNumber,
             paymentMethod: "COD",
             totalAmount: finalTotal,
           },
@@ -282,30 +278,16 @@ const CheckoutPage = () => {
                   <input
                     type="radio"
                     name="paymentMethod"
-                    value="vnpay"
-                    checked={form.paymentMethod === "vnpay"}
+                    value="bank_transfer"
+                    checked={form.paymentMethod === "bank_transfer"}
                     onChange={handleChange}
                   />
                   <div className="payment-content">
-                    <span className="payment-name">VNPay</span>
-                    <span className="payment-desc">
-                      Thanh toán qua ví điện tử VNPay
+                    <span className="payment-name">
+                      Chuyển khoản ngân hàng (TP Bank)
                     </span>
-                  </div>
-                </label>
-
-                <label className="payment-option">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="momo"
-                    checked={form.paymentMethod === "momo"}
-                    onChange={handleChange}
-                  />
-                  <div className="payment-content">
-                    <span className="payment-name">MoMo</span>
                     <span className="payment-desc">
-                      Thanh toán qua ví điện tử MoMo
+                      Quét mã QR để thanh toán nhanh chóng
                     </span>
                   </div>
                 </label>
@@ -415,6 +397,100 @@ const CheckoutPage = () => {
           </div>
         </div>
       </div>
+
+      {/* QR Code Payment Modal */}
+      {showQRModal && qrData && (
+        <div className="qr-modal-overlay" onClick={() => setShowQRModal(false)}>
+          <div
+            className="qr-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="qr-modal-close"
+              onClick={() => setShowQRModal(false)}
+            >
+              ✕
+            </button>
+
+            <h2 className="qr-modal-title">QUÉT MÃ QR ĐỂ THANH TOÁN</h2>
+
+            <div className="qr-code-container">
+              <img
+                src={qrData.qrCodeUrl}
+                alt="QR Code Payment"
+                className="qr-code-image"
+              />
+            </div>
+
+            <div className="bank-info-box">
+              <h3>THÔNG TIN CHUYỂN KHOẢN</h3>
+              <div className="bank-info-row">
+                <span className="info-label">Ngân hàng:</span>
+                <span className="info-value">{qrData.bankInfo.bankName}</span>
+              </div>
+              <div className="bank-info-row">
+                <span className="info-label">Số tài khoản:</span>
+                <span className="info-value">
+                  {qrData.bankInfo.accountNumber}
+                </span>
+              </div>
+              <div className="bank-info-row">
+                <span className="info-label">Chủ tài khoản:</span>
+                <span className="info-value">
+                  {qrData.bankInfo.accountName}
+                </span>
+              </div>
+              <div className="bank-info-row highlight">
+                <span className="info-label">Số tiền:</span>
+                <span className="info-value amount">
+                  {qrData.bankInfo.amount.toLocaleString("vi-VN")}₫
+                </span>
+              </div>
+              <div className="bank-info-row highlight">
+                <span className="info-label">Nội dung CK:</span>
+                <span className="info-value content">
+                  {qrData.bankInfo.content}
+                </span>
+              </div>
+            </div>
+
+            <div className="qr-instructions">
+              <h4>📱 HƯỚNG DẪN THANH TOÁN</h4>
+              <ol>
+                <li>Mở ứng dụng ngân hàng trên điện thoại</li>
+                <li>
+                  Chọn chức năng <strong>"Quét mã QR"</strong>
+                </li>
+                <li>Quét mã QR phía trên</li>
+                <li>Kiểm tra thông tin và xác nhận thanh toán</li>
+              </ol>
+              <div className="warning-note">
+                <strong>⚠️ LƯU Ý:</strong> Vui lòng ghi ĐÚNG nội dung chuyển
+                khoản <strong>{qrData.bankInfo.content}</strong> để đơn hàng
+                được xử lý nhanh chóng.
+              </div>
+            </div>
+
+            <button
+              className="btn-confirm-paid"
+              onClick={() => {
+                setShowQRModal(false);
+                navigate("/order-success", {
+                  state: {
+                    orderId: qrData.orderId,
+                    orderNumber: qrData.orderNumber,
+                    paymentMethod: "bank_transfer",
+                    totalAmount: finalTotal,
+                  },
+                  replace: true,
+                });
+              }}
+            >
+              TÔI ĐÃ CHUYỂN KHOẢN
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
