@@ -21,6 +21,7 @@ import reviewRoutes from "./routes/reviewRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
+import couponRoutes from "./routes/couponRoutes.js";
 
 console.log("🔑 JWT_SECRET loaded:", process.env.JWT_SECRET ? "YES" : "NO");
 
@@ -61,6 +62,7 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/coupons", couponRoutes);
 
 // Health check route
 app.get("/api/health", (req, res) => {

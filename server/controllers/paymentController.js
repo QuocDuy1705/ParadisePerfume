@@ -1,5 +1,6 @@
 import Cart from "../models/Cart.js";
 import Order from "../models/Order.js";
+import Coupon from "../models/Coupon.js";
 
 /**
  * Payment Controller - QR Code TP Bank & COD
@@ -14,7 +15,15 @@ import Order from "../models/Order.js";
  */
 export const createBankOrder = async (req, res) => {
   try {
-    const { shippingAddress, note, shippingFee, items, totalPrice } = req.body;
+    const {
+      shippingAddress,
+      note,
+      shippingFee,
+      items,
+      totalPrice,
+      couponCode,
+      discount,
+    } = req.body;
 
     console.log("🏦 Bank QR Payment request:", {
       userId: req.user.id,
@@ -61,6 +70,26 @@ export const createBankOrder = async (req, res) => {
     await newOrder.save();
 
     console.log("✅ Order created:", orderNumber);
+
+    // Apply coupon if used
+    if (couponCode) {
+      try {
+        const coupon = await Coupon.findOne({ code: couponCode.toUpperCase() });
+        if (coupon) {
+          coupon.usedBy.push({
+            userId: req.user.id,
+            usedAt: new Date(),
+            orderAmount: totalPrice,
+            discountAmount: discount || 0,
+          });
+          coupon.usedCount += 1;
+          await coupon.save();
+          console.log("✅ Coupon applied:", couponCode);
+        }
+      } catch (couponError) {
+        console.error("❌ Error applying coupon:", couponError);
+      }
+    }
 
     // Generate QR Code data (VietQR format)
     const qrData = {
@@ -195,7 +224,15 @@ export const checkPaymentStatus = async (req, res) => {
  */
 export const createCODOrder = async (req, res) => {
   try {
-    const { shippingAddress, note, shippingFee, items, totalPrice } = req.body;
+    const {
+      shippingAddress,
+      note,
+      shippingFee,
+      items,
+      totalPrice,
+      couponCode,
+      discount,
+    } = req.body;
 
     console.log("💵 COD Payment request:", {
       userId: req.user.id,
@@ -239,6 +276,27 @@ export const createCODOrder = async (req, res) => {
     await newOrder.save();
 
     console.log("✅ COD Order created:", orderNumber);
+
+    // Apply coupon if used
+    if (couponCode) {
+      try {
+        const coupon = await Coupon.findOne({ code: couponCode.toUpperCase() });
+        if (coupon) {
+          coupon.usedBy.push({
+            userId: req.user.id,
+            usedAt: new Date(),
+            orderAmount: totalPrice,
+            discountAmount: discount || 0,
+          });
+          coupon.usedCount += 1;
+          await coupon.save();
+          console.log("✅ Coupon applied:", couponCode);
+        }
+      } catch (couponError) {
+        console.error("❌ Error applying coupon:", couponError);
+        // Don't fail order if coupon update fails
+      }
+    }
 
     // Clear cart
     await Cart.findOneAndDelete({ user: req.user.id });

@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import { AuthProvider } from "./context/AuthContext";
-import { CartProvider } from "./context/CartContext";
-import { WishlistProvider } from "./context/WishlistContext";
+import { AuthProvider } from "./core/context/AuthContext";
+import { CartProvider } from "./core/context/CartContext";
+import { WishlistProvider } from "./core/context/WishlistContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

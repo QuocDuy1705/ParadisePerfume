@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import { sendWelcomeEmail } from "../utils/sendMail.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "yourSecretKey";
 
@@ -46,6 +47,25 @@ export const register = async (req, res) => {
     // Tạo token
     const token = generateToken(user);
 
+    // Send welcome email (async, don't wait)
+    console.log("🔔 Attempting to send welcome email to:", user.email);
+    sendWelcomeEmail(user.email, {
+      firstName: user.firstName,
+      lastName: user.lastName,
+    })
+      .then(() => {
+        console.log("✅ Welcome email sent successfully to:", user.email);
+      })
+      .catch((emailError) => {
+        console.error("❌ Failed to send welcome email:", emailError);
+        console.error("Error details:", {
+          message: emailError.message,
+          code: emailError.code,
+          command: emailError.command,
+        });
+        // Email failure should not block registration
+      });
+
     res.status(201).json({
       token,
       user: {
@@ -58,6 +78,15 @@ export const register = async (req, res) => {
       },
     });
   } catch (err) {
+    console.error("Registration error:", err);
+
+    // Handle duplicate email error
+    if (err.code === 11000 || err.message.includes("duplicate key")) {
+      return res.status(400).json({
+        message: "Email đã được đăng ký. Vui lòng sử dụng email khác.",
+      });
+    }
+
     res.status(500).json({ message: err.message });
   }
 };

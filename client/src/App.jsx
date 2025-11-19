@@ -7,62 +7,104 @@ import {
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import ScrollToTop from "./components/ScrollToTop";
-import ChatButton from "./components/ChatButton";
-import AdminRoute from "./components/AdminRoute";
-import { useCart } from "./context/CartContext";
-import { SocketProvider } from "./context/SocketContext";
-import CartSidebar from "./components/CartSidebar";
 
-// Lazy load pages for better performance
-const Home = lazy(() => import("./pages/Home"));
-const ProductDetail = lazy(() => import("./pages/ProductDetail"));
-const CartPage = lazy(() => import("./pages/CartPage"));
-const Orders = lazy(() => import("./pages/Order"));
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
-const ProductPage = lazy(() => import("./pages/ProductPage"));
-const CategoryPage = lazy(() => import("./pages/CategoryPage"));
-const MenPage = lazy(() => import("./pages/MenPage"));
-const WomenPage = lazy(() => import("./pages/WomenPage"));
-const MiniPage = lazy(() => import("./pages/MiniPage"));
-const GiftsetPage = lazy(() => import("./pages/GiftsetPage"));
-const AboutPage = lazy(() => import("./pages/AboutPage"));
-const AuthPage = lazy(() => import("./pages/AuthPage"));
-const ProfilePage = lazy(() => import("./pages/ProfilePage"));
-const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
-const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
-const VNPayReturn = lazy(() => import("./pages/VNPayReturn"));
-const MoMoReturn = lazy(() => import("./pages/MoMoReturn"));
-const SearchResultsPage = lazy(() => import("./pages/SearchResultsPage"));
-const WishlistPage = lazy(() => import("./pages/WishlistPage"));
+// SHARED COMPONENTS
+import Header from "./shared/components/Header";
+import Footer from "./shared/components/Footer";
+import ScrollToTop from "./shared/components/ScrollToTop";
 
-// Info pages from Footer
-const ContactPage = lazy(() => import("./pages/ContactPage"));
-const FAQPage = lazy(() => import("./pages/FAQPage"));
-const ShippingPage = lazy(() => import("./pages/ShippingPage"));
-const ReturnsPage = lazy(() => import("./pages/ReturnsPage"));
-const WarrantyPage = lazy(() => import("./pages/WarrantyPage"));
-const StoresPage = lazy(() => import("./pages/StoresPage"));
-const CareersPage = lazy(() => import("./pages/CareersPage"));
-const SustainabilityPage = lazy(() => import("./pages/SustainabilityPage"));
-const HowToOrderPage = lazy(() => import("./pages/HowToOrderPage"));
-const PaymentPage = lazy(() => import("./pages/PaymentPage"));
-const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
-const TermsPage = lazy(() => import("./pages/TermsPage"));
+// CORE
+import { useCart } from "./core/context/CartContext";
+import { SocketProvider } from "./core/context/SocketContext";
 
-// Blog pages
-const BlogPage = lazy(() => import("./pages/BlogPage"));
-const BlogDetail = lazy(() => import("./pages/BlogDetail"));
-const BlogBrands = lazy(() => import("./pages/BlogBrands"));
-const BlogFragranceTypes = lazy(() => import("./pages/BlogFragranceTypes"));
-const BlogHowToChoose = lazy(() => import("./pages/BlogHowToChoose"));
-const BlogPerfumeCare = lazy(() => import("./pages/BlogPerfumeCare"));
-const BlogLuxuryBrands = lazy(() => import("./pages/BlogLuxuryBrands"));
+// FEATURES - Lazy load pages for better performance
 
-// AI pages
-const AIRecommendation = lazy(() => import("./components/AIRecommendation"));
+// Auth
+const AuthPage = lazy(() => import("./features/auth/AuthPage"));
+
+// Home
+const Home = lazy(() => import("./features/home/Home"));
+
+// Products
+const ProductPage = lazy(() => import("./features/products/pages/ProductPage"));
+const ProductDetail = lazy(() =>
+  import("./features/products/pages/ProductDetail")
+);
+const CategoryPage = lazy(() =>
+  import("./features/products/pages/CategoryPage")
+);
+const MenPage = lazy(() => import("./features/products/pages/MenPage"));
+const WomenPage = lazy(() => import("./features/products/pages/WomenPage"));
+const MiniPage = lazy(() => import("./features/products/pages/MiniPage"));
+const GiftsetPage = lazy(() => import("./features/products/pages/GiftsetPage"));
+const SearchResultsPage = lazy(() =>
+  import("./features/products/pages/SearchResultsPage")
+);
+const WishlistPage = lazy(() =>
+  import("./features/products/pages/WishlistPage")
+);
+
+// Cart
+const CartPage = lazy(() => import("./features/cart/CartPage"));
+const CartSidebar = lazy(() =>
+  import("./features/cart/components/CartSidebar")
+);
+
+// Checkout
+const CheckoutPage = lazy(() => import("./features/checkout/CheckoutPage"));
+const PaymentPage = lazy(() => import("./features/checkout/PaymentPage"));
+
+// Orders
+const Orders = lazy(() => import("./features/orders/OrderPage"));
+const OrderSuccess = lazy(() => import("./features/orders/OrderSuccess"));
+
+// Profile
+const ProfilePage = lazy(() => import("./features/profile/ProfilePage"));
+
+// Admin
+const AdminRoute = lazy(() => import("./features/admin/components/AdminRoute"));
+const AdminDashboard = lazy(() =>
+  import("./features/admin/pages/AdminDashboard")
+);
+
+// Blog
+const BlogPage = lazy(() => import("./features/blog/pages/BlogPage"));
+const BlogDetail = lazy(() => import("./features/blog/pages/BlogDetail"));
+const BlogBrands = lazy(() => import("./features/blog/pages/BlogBrands"));
+const BlogFragranceTypes = lazy(() =>
+  import("./features/blog/pages/BlogFragranceTypes")
+);
+const BlogHowToChoose = lazy(() =>
+  import("./features/blog/pages/BlogHowToChoose")
+);
+const BlogPerfumeCare = lazy(() =>
+  import("./features/blog/pages/BlogPerfumeCare")
+);
+const BlogLuxuryBrands = lazy(() =>
+  import("./features/blog/pages/BlogLuxuryBrands")
+);
+
+// AI
+const AIRecommendation = lazy(() => import("./features/ai/AIRecommendation"));
+
+// Chat
+const ChatButton = lazy(() => import("./features/chat/ChatButton"));
+
+// Static Pages
+const AboutPage = lazy(() => import("./features/static/AboutPage"));
+const ContactPage = lazy(() => import("./features/static/ContactPage"));
+const FAQPage = lazy(() => import("./features/static/FAQPage"));
+const ShippingPage = lazy(() => import("./features/static/ShippingPage"));
+const ReturnsPage = lazy(() => import("./features/static/ReturnsPage"));
+const WarrantyPage = lazy(() => import("./features/static/WarrantyPage"));
+const StoresPage = lazy(() => import("./features/static/StoresPage"));
+const CareersPage = lazy(() => import("./features/static/CareersPage"));
+const SustainabilityPage = lazy(() =>
+  import("./features/static/SustainabilityPage")
+);
+const HowToOrderPage = lazy(() => import("./features/static/HowToOrderPage"));
+const PrivacyPage = lazy(() => import("./features/static/PrivacyPage"));
+const TermsPage = lazy(() => import("./features/static/TermsPage"));
 
 // Loading component
 const LoadingSpinner = () => (
@@ -127,8 +169,6 @@ const App = () => {
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/order-success" element={<OrderSuccess />} />
-              <Route path="/vnpay-return" element={<VNPayReturn />} />
-              <Route path="/momo-return" element={<MoMoReturn />} />
 
               {/* AI Recommendation */}
               <Route path="/ai-recommend" element={<AIRecommendation />} />

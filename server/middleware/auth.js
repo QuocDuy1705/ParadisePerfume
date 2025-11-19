@@ -48,5 +48,6 @@ export function isAdmin(req, res, next) {
   next();
 }
 
-// Alias for protect (used in many routes)
+// Aliases for compatibility with existing routes
 export const protect = verifyToken;
+export const admin = isAdmin;
