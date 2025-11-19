@@ -48,6 +48,36 @@ export function isAdmin(req, res, next) {
   next();
 }
 
+// Optional authentication - không bắt buộc đăng nhập (cho guest checkout)
+export async function optionalAuth(req, res, next) {
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (token) {
+      // Có token thì verify
+      const decoded = await new Promise((resolve, reject) => {
+        jwt.verify(token, JWT_SECRET, (err, decoded) => {
+          if (err) reject(err);
+          else resolve(decoded);
+        });
+      });
+      req.user = decoded;
+      req.isGuest = false;
+    } else {
+      // Không có token = guest user
+      req.user = null;
+      req.isGuest = true;
+    }
+    next();
+  } catch (error) {
+    // Token không hợp lệ = coi như guest
+    req.user = null;
+    req.isGuest = true;
+    next();
+  }
+}
+
 // Aliases for compatibility with existing routes
 export const protect = verifyToken;
 export const admin = isAdmin;

@@ -24,7 +24,7 @@ const ProductDetail = () => {
   const [refreshReviews, setRefreshReviews] = useState(0);
   const [activeTab, setActiveTab] = useState("description");
 
-  const { fetchCart, setIsCartOpen } = useCart();
+  const { addToCart } = useCart();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
 
   // Check if current product is in wishlist
@@ -54,27 +54,7 @@ const ProductDetail = () => {
   }, [id]);
 
   const handleAddToCart = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        showWarning("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
-        navigate("/auth");
-        return;
-      }
-
-      await axios.post(
-        `${API_URL}/cart/add`,
-        { productId: product._id, quantity },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      await fetchCart();
-      setIsCartOpen(true);
-      showSuccess(`Đã thêm ${quantity} ${product.name} vào giỏ hàng!`);
-    } catch (err) {
-      console.error("Lỗi khi thêm vào giỏ:", err);
-      showError("Không thể thêm vào giỏ hàng. Vui lòng thử lại.");
-    }
+    await addToCart(product._id, quantity);
   };
 
   const handleToggleWishlist = async () => {

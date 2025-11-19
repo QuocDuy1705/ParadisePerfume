@@ -1,7 +1,14 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
-import { AuthContext } from "../../core/context/AuthContext"; // dùng context
-import { showSuccess, showError } from "../../core/utils/toast";
+import { AuthContext } from "../../core/context/AuthContext";
+import { useCart } from "../../core/context/CartContext";
+import { showSuccess, showError, showWarning } from "../../core/utils/toast";
+import {
+  validatePasswordStrength,
+  validateEmail,
+  validateName,
+} from "../../core/utils/validators";
+import PasswordStrengthMeter from "../../components/PasswordStrengthMeter";
 import "../../assets/styles/auth.css";
 import { useNavigate } from "react-router-dom";
 
@@ -22,10 +29,25 @@ const AuthPage = () => {
   const [password, setPassword] = useState("");
 
   const { login } = useContext(AuthContext);
+  const { syncGuestCartToServer } = useCart();
 
   // Xử lý login
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    // Validate email
+    const emailValidation = validateEmail(loginEmail);
+    if (!emailValidation.isValid) {
+      showWarning(emailValidation.message);
+      return;
+    }
+
+    // Validate password
+    if (!loginPassword || loginPassword.length < 6) {
+      showWarning("Mật khẩu phải có ít nhất 6 ký tự");
+      return;
+    }
+
     try {
       const res = await axios.post("http://localhost:5000/api/users/login", {
         email: loginEmail,
@@ -36,6 +58,9 @@ const AuthPage = () => {
 
       // gọi context login
       login(res.data);
+
+      // Sync guest cart to server
+      await syncGuestCartToServer();
 
       showSuccess("Đăng nhập thành công!");
 
@@ -55,6 +80,35 @@ const AuthPage = () => {
   // Xử lý register
   const handleRegister = async (e) => {
     e.preventDefault();
+
+    // Validate first name
+    const firstNameValidation = validateName(firstName);
+    if (!firstNameValidation.isValid) {
+      showWarning(firstNameValidation.message);
+      return;
+    }
+
+    // Validate last name
+    const lastNameValidation = validateName(lastName);
+    if (!lastNameValidation.isValid) {
+      showWarning(lastNameValidation.message);
+      return;
+    }
+
+    // Validate email
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      showWarning(emailValidation.message);
+      return;
+    }
+
+    // Validate password strength
+    const passwordValidation = validatePasswordStrength(password);
+    if (!passwordValidation.isValid) {
+      showWarning(passwordValidation.message);
+      return;
+    }
+
     try {
       await axios.post("http://localhost:5000/api/users/register", {
         title,
@@ -165,7 +219,9 @@ const AuthPage = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            minLength="8"
           />
+          <PasswordStrengthMeter password={password} />
           <p className="policy-text">
             By creating an account, I agree to PARADISE's{" "}
             <a href="/privacy">Privacy Policy</a> and{" "}

@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import dotenv from "dotenv";
 import cors from "cors";
 import jwt from "jsonwebtoken";
+import helmet from "helmet";
 
 // Load environment variables first
 dotenv.config();
@@ -40,6 +41,24 @@ const io = new Server(httpServer, {
 
 // Make io accessible to our router
 app.set("io", io);
+
+// ==================== SECURITY MIDDLEWARE ====================
+// Helmet.js - Set security HTTP headers
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", "data:", "https:", "http:"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        connectSrc: ["'self'", "https://img.vietqr.io"],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+  })
+);
 
 // Middleware
 app.use(cors());

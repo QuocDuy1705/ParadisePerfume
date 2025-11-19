@@ -2,6 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useCart } from "../../core/context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { showError, showWarning, showSuccess } from "../../core/utils/toast";
+import {
+  validateEmail,
+  validatePhone,
+  validateName,
+  validateAddress,
+} from "../../core/utils/validators";
 import api from "../../core/utils/api";
 import "../../assets/styles/checkout.css";
 
@@ -107,12 +113,43 @@ const CheckoutPage = () => {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        showWarning("Vui lòng đăng nhập để tiếp tục!");
-        navigate("/auth");
+      // Validate form inputs
+      const nameValidation = validateName(form.fullName);
+      if (!nameValidation.isValid) {
+        showWarning(nameValidation.message);
+        setLoading(false);
         return;
       }
+
+      const emailValidation = validateEmail(form.email);
+      if (!emailValidation.isValid) {
+        showWarning(emailValidation.message);
+        setLoading(false);
+        return;
+      }
+
+      const phoneValidation = validatePhone(form.phone);
+      if (!phoneValidation.isValid) {
+        showWarning(phoneValidation.message);
+        setLoading(false);
+        return;
+      }
+
+      const addressValidation = validateAddress(form.address);
+      if (!addressValidation.isValid) {
+        showWarning(addressValidation.message);
+        setLoading(false);
+        return;
+      }
+
+      if (!form.city || form.city.trim() === "") {
+        showWarning("Vui lòng chọn Tỉnh/Thành phố");
+        setLoading(false);
+        return;
+      }
+
+      const token = localStorage.getItem("token");
+      const isGuest = !token;
 
       const orderData = {
         items: cart.items.map((item) => ({
@@ -137,10 +174,21 @@ const CheckoutPage = () => {
         discount: discountAmount,
       };
 
+      // Thêm guestEmail nếu là guest
+      if (isGuest) {
+        orderData.guestEmail = form.email;
+      }
+
       // Xử lý theo phương thức thanh toán
       if (form.paymentMethod === "bank_transfer") {
         // Thanh toán qua TP Bank QR Code
-        const res = await api.post("/payment/create-bank-order", orderData);
+        const endpoint = isGuest
+          ? "/payment/guest/create-bank-order"
+          : "/payment/create-bank-order";
+
+        const res = await api.post(endpoint, orderData, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
 
         if (res.data.success) {
           // Hiển thị QR Code modal
@@ -151,7 +199,13 @@ const CheckoutPage = () => {
         }
       } else {
         // Thanh toán COD
-        const res = await api.post("/payment/create-cod-order", orderData);
+        const endpoint = isGuest
+          ? "/payment/guest/create-cod-order"
+          : "/payment/create-cod-order";
+
+        const res = await api.post(endpoint, orderData, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
         console.log("COD Order created:", res.data);
 
         // Điều hướng sang trang success

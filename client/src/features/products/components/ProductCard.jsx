@@ -1,38 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { useCart } from "../../../core/context/CartContext";
-import { showSuccess, showWarning, showError } from "../../../core/utils/toast";
 import "../../../assets/styles/home.css";
 
-const API_URL = "http://localhost:5000/api";
-
 const ProductCard = ({ product }) => {
-  const { fetchCart, setIsCartOpen } = useCart();
+  const { addToCart } = useCart();
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        showWarning("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
-        return;
-      }
-
-      await axios.post(
-        `${API_URL}/cart/add`,
-        { productId: product._id, quantity: 1 },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      await fetchCart();
-      setIsCartOpen(true);
-      showSuccess(`Đã thêm ${product.name} vào giỏ hàng!`);
-    } catch (err) {
-      console.error("Lỗi khi thêm vào giỏ:", err);
-      showError("Không thể thêm vào giỏ hàng. Vui lòng thử lại.");
-    }
+    await addToCart(product._id, 1);
   };
 
   // Format giá VND
