@@ -26,7 +26,7 @@ const PasswordStrengthMeter = ({ password }) => {
   else feedback.push("Ít nhất 1 số");
 
   // Check special characters
-  if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) score += 10;
+  if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) score += 10;
   else feedback.push("Ít nhất 1 ký tự đặc biệt");
 
   // Determine strength

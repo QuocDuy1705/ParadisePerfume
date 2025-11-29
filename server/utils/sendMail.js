@@ -287,8 +287,8 @@ export const sendOrderStatusEmail = async (to, order, userInfo) => {
 };
 
 // Password Reset Email
-export const sendPasswordResetEmail = async (to, resetToken, userInfo) => {
-  const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+export const sendPasswordResetEmail = async (to, userInfo) => {
+  const { resetToken, resetUrl, firstName, lastName } = userInfo;
 
   const html = `
     <!DOCTYPE html>
@@ -305,17 +305,22 @@ export const sendPasswordResetEmail = async (to, resetToken, userInfo) => {
         
         <div class="content">
           <h2 style="color: #333;">🔐 Yêu cầu đặt lại mật khẩu</h2>
-          <p>Xin chào <strong>${
-            userInfo?.firstName || "Quý khách"
-          }</strong>,</p>
+          <p>Xin chào <strong>${firstName || "Quý khách"}</strong>,</p>
           <p>Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn.</p>
+          
+          <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+            <p style="margin: 0 0 10px 0; color: #666;">Mã xác thực của bạn:</p>
+            <h1 style="margin: 0; font-size: 36px; letter-spacing: 8px; color: #000;">${resetToken}</h1>
+          </div>
+
+          <p style="text-align: center;">Hoặc nhấn vào nút bên dưới:</p>
           
           <div style="text-align: center;">
             <a href="${resetUrl}" class="button">Đặt lại mật khẩu</a>
           </div>
 
           <p style="margin-top: 20px; color: #666; font-size: 14px;">
-            ⚠️ Link này sẽ hết hạn sau 1 giờ.<br>
+            ⚠️ Mã này sẽ hết hạn sau 15 phút.<br>
             Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.
           </p>
         </div>

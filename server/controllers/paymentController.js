@@ -59,6 +59,9 @@ export const createBankOrder = async (req, res) => {
       items: items.map((item) => ({
         productId: item.productId,
         quantity: item.quantity,
+        price: item.price,
+        name: item.name,
+        image: item.image,
       })),
       totalPrice: total,
       shippingAddress,
@@ -265,6 +268,9 @@ export const createCODOrder = async (req, res) => {
       items: items.map((item) => ({
         productId: item.productId,
         quantity: item.quantity,
+        price: item.price,
+        name: item.name,
+        image: item.image,
       })),
       totalPrice: total,
       shippingAddress,

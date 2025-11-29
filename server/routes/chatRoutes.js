@@ -6,6 +6,7 @@ import {
   sendMessage,
   markAsRead,
   closeConversation,
+  reopenConversation,
   uploadChatFile,
 } from "../controllers/chatController.js";
 import { protect } from "../middleware/auth.js";
@@ -38,5 +39,10 @@ router.put("/messages/:conversationId/read", protect, markAsRead);
 // Admin routes
 router.get("/conversations", protect, getAllConversations);
 router.put("/conversations/:conversationId/close", protect, closeConversation);
+router.put(
+  "/conversations/:conversationId/reopen",
+  protect,
+  reopenConversation
+);
 
 export default router;

@@ -1,6 +1,7 @@
 import Product from "../models/Product.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { AppError } from "../middleware/errorHandler.js";
+import { clearCacheByPattern } from "../middleware/cache.js";
 
 // @desc   Lấy tất cả sản phẩm với pagination
 // @route  GET /api/products
@@ -52,6 +53,10 @@ export const addProduct = asyncHandler(async (req, res) => {
   });
 
   const createdProduct = await product.save();
+
+  // Clear product cache
+  clearCacheByPattern("/api/products");
+
   res.status(201).json(createdProduct);
 });
 
@@ -68,6 +73,9 @@ export const updateProduct = asyncHandler(async (req, res) => {
     throw new AppError("Không tìm thấy sản phẩm", 404);
   }
 
+  // Clear product cache
+  clearCacheByPattern("/api/products");
+
   res.json(updated);
 });
 
@@ -80,6 +88,9 @@ export const deleteProduct = asyncHandler(async (req, res) => {
   if (!deleted) {
     throw new AppError("Không tìm thấy sản phẩm", 404);
   }
+
+  // Clear product cache
+  clearCacheByPattern("/api/products");
 
   res.json({ message: "Đã xóa sản phẩm thành công", product: deleted });
 });

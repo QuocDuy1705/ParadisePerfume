@@ -12,6 +12,9 @@ import {
   Edit2,
   Heart,
   ShoppingBag,
+  Lock,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import "../../assets/styles/profile.css";
 
@@ -21,6 +24,21 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("profile");
   const navigate = useNavigate();
+
+  // Password change states
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false,
+  });
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +81,70 @@ const ProfilePage = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/auth");
+  };
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    setPasswordError("");
+    setPasswordSuccess("");
+
+    // Validation
+    if (
+      !passwordForm.currentPassword ||
+      !passwordForm.newPassword ||
+      !passwordForm.confirmPassword
+    ) {
+      setPasswordError("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 6) {
+      setPasswordError("Mật khẩu mới phải có ít nhất 6 ký tự");
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordError("Mật khẩu xác nhận không khớp");
+      return;
+    }
+
+    if (passwordForm.currentPassword === passwordForm.newPassword) {
+      setPasswordError("Mật khẩu mới phải khác mật khẩu hiện tại");
+      return;
+    }
+
+    setPasswordLoading(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        "http://localhost:5000/api/users/change-password",
+        {
+          currentPassword: passwordForm.currentPassword,
+          newPassword: passwordForm.newPassword,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setPasswordSuccess("Đổi mật khẩu thành công!");
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+
+      // Clear success message after 3 seconds
+      setTimeout(() => setPasswordSuccess(""), 3000);
+    } catch (err) {
+      setPasswordError(
+        err.response?.data?.message ||
+          "Đổi mật khẩu thất bại. Vui lòng thử lại!"
+      );
+    } finally {
+      setPasswordLoading(false);
+    }
   };
 
   const formatPrice = (price) => {
@@ -128,6 +210,13 @@ const ProfilePage = () => {
           >
             <Package size={18} />
             Đơn hàng của tôi
+          </button>
+          <button
+            className={`tab-btn ${activeTab === "password" ? "active" : ""}`}
+            onClick={() => setActiveTab("password")}
+          >
+            <Lock size={18} />
+            Đổi mật khẩu
           </button>
           <button
             className={`tab-btn ${activeTab === "wishlist" ? "active" : ""}`}
@@ -342,6 +431,192 @@ const ProfilePage = () => {
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Change Password Tab */}
+          {activeTab === "password" && (
+            <div className="password-section">
+              <div className="section-header">
+                <h2 className="section-title">ĐỔI MẬT KHẨU</h2>
+                <p className="section-subtitle">
+                  Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu với
+                  người khác
+                </p>
+              </div>
+
+              <form className="password-form" onSubmit={handlePasswordChange}>
+                {passwordError && (
+                  <div className="alert alert-error">
+                    <span>⚠️ {passwordError}</span>
+                  </div>
+                )}
+
+                {passwordSuccess && (
+                  <div className="alert alert-success">
+                    <span>✓ {passwordSuccess}</span>
+                  </div>
+                )}
+
+                <div className="form-group">
+                  <label htmlFor="currentPassword">
+                    <Lock size={18} />
+                    Mật khẩu hiện tại *
+                  </label>
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showPasswords.current ? "text" : "password"}
+                      id="currentPassword"
+                      value={passwordForm.currentPassword}
+                      onChange={(e) =>
+                        setPasswordForm({
+                          ...passwordForm,
+                          currentPassword: e.target.value,
+                        })
+                      }
+                      placeholder="Nhập mật khẩu hiện tại"
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="toggle-password"
+                      onClick={() =>
+                        setShowPasswords({
+                          ...showPasswords,
+                          current: !showPasswords.current,
+                        })
+                      }
+                    >
+                      {showPasswords.current ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="newPassword">
+                    <Lock size={18} />
+                    Mật khẩu mới *
+                  </label>
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showPasswords.new ? "text" : "password"}
+                      id="newPassword"
+                      value={passwordForm.newPassword}
+                      onChange={(e) =>
+                        setPasswordForm({
+                          ...passwordForm,
+                          newPassword: e.target.value,
+                        })
+                      }
+                      placeholder="Nhập mật khẩu mới (ít nhất 6 ký tự)"
+                      required
+                      minLength={6}
+                    />
+                    <button
+                      type="button"
+                      className="toggle-password"
+                      onClick={() =>
+                        setShowPasswords({
+                          ...showPasswords,
+                          new: !showPasswords.new,
+                        })
+                      }
+                    >
+                      {showPasswords.new ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="confirmPassword">
+                    <Lock size={18} />
+                    Xác nhận mật khẩu mới *
+                  </label>
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showPasswords.confirm ? "text" : "password"}
+                      id="confirmPassword"
+                      value={passwordForm.confirmPassword}
+                      onChange={(e) =>
+                        setPasswordForm({
+                          ...passwordForm,
+                          confirmPassword: e.target.value,
+                        })
+                      }
+                      placeholder="Nhập lại mật khẩu mới"
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="toggle-password"
+                      onClick={() =>
+                        setShowPasswords({
+                          ...showPasswords,
+                          confirm: !showPasswords.confirm,
+                        })
+                      }
+                    >
+                      {showPasswords.confirm ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="password-requirements">
+                  <p className="requirements-title">Yêu cầu mật khẩu:</p>
+                  <ul>
+                    <li
+                      className={
+                        passwordForm.newPassword.length >= 6 ? "valid" : ""
+                      }
+                    >
+                      ✓ Ít nhất 6 ký tự
+                    </li>
+                    <li
+                      className={
+                        passwordForm.newPassword &&
+                        passwordForm.newPassword ===
+                          passwordForm.confirmPassword
+                          ? "valid"
+                          : ""
+                      }
+                    >
+                      ✓ Mật khẩu xác nhận khớp
+                    </li>
+                    <li
+                      className={
+                        passwordForm.currentPassword &&
+                        passwordForm.newPassword &&
+                        passwordForm.currentPassword !==
+                          passwordForm.newPassword
+                          ? "valid"
+                          : ""
+                      }
+                    >
+                      ✓ Khác mật khẩu hiện tại
+                    </li>
+                  </ul>
+                </div>
+
+                <button
+                  type="submit"
+                  className="change-password-btn"
+                  disabled={passwordLoading}
+                >
+                  {passwordLoading ? "ĐANG XỬ LÝ..." : "ĐỔI MẬT KHẨU"}
+                </button>
+              </form>
             </div>
           )}
         </div>

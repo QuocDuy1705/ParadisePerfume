@@ -90,6 +90,55 @@ router.post("/logout", verifyToken, (req, res) => {
   res.json({ message: "Logout successful. Please clear token on client." });
 });
 
+// Change password
+router.put("/change-password", verifyToken, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    // Validate input
+    if (!currentPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Vui lòng nhập đầy đủ thông tin" });
+    }
+
+    if (newPassword.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Mật khẩu mới phải có ít nhất 6 ký tự" });
+    }
+
+    // Get user with password field
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "Không tìm thấy người dùng" });
+    }
+
+    // Check if user has password (not Google login)
+    if (!user.password) {
+      return res
+        .status(400)
+        .json({ message: "Tài khoản Google không thể đổi mật khẩu" });
+    }
+
+    // Verify current password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Mật khẩu hiện tại không đúng" });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: "Đổi mật khẩu thành công" });
+  } catch (err) {
+    console.error("Change password error:", err);
+    res.status(500).json({ message: "Lỗi server", error: err.message });
+  }
+});
+
 router.get("/", verifyToken, isAdmin, getUsers);
 
 export default router;

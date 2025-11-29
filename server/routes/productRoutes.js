@@ -6,17 +6,21 @@ import {
   deleteProduct,
   getProductById,
   getProductsByCategory,
-  searchProducts, // nhớ import hàm search
+  searchProducts,
 } from "../controllers/productController.js";
+import { cacheMiddleware } from "../middleware/cache.js";
 
 const router = express.Router();
 
-router.get("/", getProducts); // Lấy toàn bộ
-router.get("/category/:category", getProductsByCategory); // API lọc theo category
-router.get("/search", searchProducts); // 🔍 API tìm kiếm (đặt trước :id)
-router.get("/:id", getProductById); // Lấy theo id
-router.post("/", addProduct); // Thêm mới
-router.put("/:id", updateProduct); // Cập nhật theo id
-router.delete("/:id", deleteProduct); // Xóa theo id
+// Cache GET requests for 10 minutes (600 seconds)
+router.get("/", cacheMiddleware(600), getProducts);
+router.get("/category/:category", cacheMiddleware(600), getProductsByCategory);
+router.get("/search", cacheMiddleware(300), searchProducts); // Cache search for 5 mins
+router.get("/:id", cacheMiddleware(600), getProductById);
+
+// No cache for mutations
+router.post("/", addProduct);
+router.put("/:id", updateProduct);
+router.delete("/:id", deleteProduct);
 
 export default router;

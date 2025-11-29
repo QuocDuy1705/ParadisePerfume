@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Header from "./shared/components/Header";
 import Footer from "./shared/components/Footer";
 import ScrollToTop from "./shared/components/ScrollToTop";
+import LoadingFallback from "./components/LoadingFallback";
 
 // CORE
 import { useCart } from "./core/context/CartContext";
@@ -21,6 +22,15 @@ import { SocketProvider } from "./core/context/SocketContext";
 
 // Auth
 const AuthPage = lazy(() => import("./features/auth/AuthPage"));
+const ForgotPasswordPage = lazy(() =>
+  import("./features/auth/ForgotPasswordPage")
+);
+const ResetPasswordPage = lazy(() =>
+  import("./features/auth/ResetPasswordPage")
+);
+const GoogleCallbackPage = lazy(() =>
+  import("./features/auth/GoogleCallbackPage")
+);
 
 // Home
 const Home = lazy(() => import("./features/home/Home"));
@@ -90,6 +100,9 @@ const AIRecommendation = lazy(() => import("./features/ai/AIRecommendation"));
 // Chat
 const ChatButton = lazy(() => import("./features/chat/ChatButton"));
 
+// AI Chatbox
+const AIChatbox = lazy(() => import("./components/AIChatbox"));
+
 // Static Pages
 const AboutPage = lazy(() => import("./features/static/AboutPage"));
 const ContactPage = lazy(() => import("./features/static/ContactPage"));
@@ -105,20 +118,6 @@ const SustainabilityPage = lazy(() =>
 const HowToOrderPage = lazy(() => import("./features/static/HowToOrderPage"));
 const PrivacyPage = lazy(() => import("./features/static/PrivacyPage"));
 const TermsPage = lazy(() => import("./features/static/TermsPage"));
-
-// Loading component
-const LoadingSpinner = () => (
-  <div
-    style={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      minHeight: "60vh",
-    }}
-  >
-    <div>Đang tải...</div>
-  </div>
-);
 
 // Layout wrapper component
 const Layout = ({ children }) => {
@@ -142,7 +141,7 @@ const App = () => {
       <SocketProvider>
         <ScrollToTop />
         <Layout>
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<LoadingFallback />}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/search" element={<SearchResultsPage />} />
@@ -167,6 +166,12 @@ const App = () => {
               <Route path="/giftset" element={<GiftsetPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/auth" element={<AuthPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route
+                path="/auth/google/callback"
+                element={<GoogleCallbackPage />}
+              />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/order-success" element={<OrderSuccess />} />
 
@@ -210,6 +215,9 @@ const App = () => {
 
         {/* Chat Button */}
         <ChatButton />
+
+        {/* AI Chatbox */}
+        <AIChatbox />
 
         {/* Toast Notifications */}
         <ToastContainer

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { useSocket } from "../../core/context/SocketContext";
 import ChatBox from "./ChatBox";
@@ -6,7 +6,26 @@ import "../../assets/styles/chat.css";
 
 const ChatButton = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { unreadCount } = useSocket();
+  const { socket, resetUnreadCount } = useSocket();
+  const [localUnreadCount, setLocalUnreadCount] = useState(0);
+
+  // Listen for new messages only when chat is CLOSED
+  useEffect(() => {
+    if (!socket || isOpen) {
+      return; // Don't listen if chat is open
+    }
+
+    const handleNewAdminMessage = (message) => {
+      console.log("📨 ChatButton: New admin message while chat closed");
+      setLocalUnreadCount((prev) => prev + 1);
+    };
+
+    socket.on("new_admin_message", handleNewAdminMessage);
+
+    return () => {
+      socket.off("new_admin_message", handleNewAdminMessage);
+    };
+  }, [socket, isOpen]);
 
   // Only show chat if user is logged in
   const token = localStorage.getItem("token");
@@ -15,6 +34,11 @@ const ChatButton = () => {
   }
 
   const toggleChat = () => {
+    if (!isOpen) {
+      // Opening chat - reset unread
+      setLocalUnreadCount(0);
+      resetUnreadCount();
+    }
     setIsOpen(!isOpen);
   };
 
@@ -34,9 +58,9 @@ const ChatButton = () => {
         ) : (
           <>
             <MessageCircle size={24} />
-            {unreadCount > 0 && (
+            {localUnreadCount > 0 && (
               <span className="chat-badge">
-                {unreadCount > 99 ? "99+" : unreadCount}
+                {localUnreadCount > 99 ? "99+" : localUnreadCount}
               </span>
             )}
           </>

@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import jwt from "jsonwebtoken";
 import helmet from "helmet";
+import compression from "compression";
 
 // Load environment variables first
 dotenv.config();
@@ -59,6 +60,9 @@ app.use(
     crossOriginEmbedderPolicy: false,
   })
 );
+
+// Compression middleware - nén response để giảm bandwidth
+app.use(compression());
 
 // Middleware
 app.use(cors());
@@ -357,6 +361,18 @@ io.on("connection", (socket) => {
     } catch (error) {
       console.error("Error handling admin typing:", error);
     }
+  });
+
+  // Handle admin joining admin room
+  socket.on("join_admin_room", () => {
+    socket.join("admin_room");
+    console.log(`👑 Socket ${socket.id} joined admin_room`);
+  });
+
+  // Handle admin leaving admin room
+  socket.on("leave_admin_room", () => {
+    socket.leave("admin_room");
+    console.log(`👑 Socket ${socket.id} left admin_room`);
   });
 
   // Handle disconnect

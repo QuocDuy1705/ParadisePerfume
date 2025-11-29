@@ -1,16 +1,20 @@
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../../../core/context/CartContext";
+import LazyImage from "../../../components/LazyImage";
 import "../../../assets/styles/home.css";
 
-const ProductCard = ({ product }) => {
+const ProductCard = memo(({ product }) => {
   const { addToCart } = useCart();
 
-  const handleAddToCart = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    await addToCart(product._id, 1);
-  };
+  const handleAddToCart = useCallback(
+    async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      await addToCart(product._id, 1);
+    },
+    [addToCart, product._id]
+  );
 
   // Format giá VND
   const formatPrice = (price) => {
@@ -34,7 +38,11 @@ const ProductCard = ({ product }) => {
   return (
     <div className="product-card">
       <Link to={`/product/${product._id}`} className="product-link">
-        <img src={product.image} alt={product.name} />
+        <LazyImage
+          src={product.image}
+          alt={product.name}
+          className="product-image"
+        />
         <h3>{product.name}</h3>
         <p className="product-category">{formatCategory(product.category)}</p>
         <p className="price">{formatPrice(product.price)}</p>
@@ -44,6 +52,8 @@ const ProductCard = ({ product }) => {
       </button>
     </div>
   );
-};
+});
+
+ProductCard.displayName = "ProductCard";
 
 export default ProductCard;

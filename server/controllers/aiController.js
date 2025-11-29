@@ -30,17 +30,31 @@ export const getRecommendations = async (req, res) => {
 
     // Get available products from database
     console.log("📦 Fetching products from database...");
+    console.log("🔍 Category filter:", preferences.category);
 
     // First check total products
     const totalProducts = await Product.countDocuments();
     console.log(`📊 Total products in DB: ${totalProducts}`);
 
-    // Try without filters first
-    const allProducts = await Product.find({}).select(
-      "name type category price description notes image detailUrl rating stock isActive"
+    // Build query filter
+    const query = {};
+
+    // Filter by category if specified (Mini or Giftset)
+    if (preferences.category) {
+      query.category = preferences.category;
+      console.log(`🎯 Filtering by category: ${preferences.category}`);
+    }
+
+    // Fetch products with filter
+    const allProducts = await Product.find(query).select(
+      "name type category price description notes image detailUrl rating stock isActive brand"
     );
 
-    console.log(`✅ Found ${allProducts.length} products (without filter)`);
+    console.log(
+      `✅ Found ${allProducts.length} products (${
+        preferences.category ? "with category filter" : "without filter"
+      })`
+    );
 
     // Use all products for now (remove strict filters)
     const availableProducts = allProducts;

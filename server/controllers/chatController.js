@@ -24,6 +24,10 @@ export const getOrCreateConversation = async (req, res) => {
         userEmail: user.email,
         status: "active",
       });
+    } else if (conversation.status === "closed") {
+      // Reopen closed conversation
+      conversation.status = "active";
+      await conversation.save();
     }
 
     res.json(conversation);
@@ -129,15 +133,42 @@ export const sendMessage = async (req, res) => {
   try {
     const { conversationId, message } = req.body;
     const userId = req.user.id;
+
+    console.log("📨 Send message request:", {
+      conversationId,
+      message: message?.substring(0, 50),
+      userId,
+    });
+
     const user = await User.findById(userId);
+    if (!user) {
+      console.error("❌ User not found:", userId);
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log("👤 User found:", {
+      id: user._id,
+      name: `${user.firstName} ${user.lastName}`,
+      isAdmin: user.isAdmin,
+    });
 
     // Sanitize and validate message
     let sanitizedMessage;
     try {
       sanitizedMessage = sanitizeMessage(message);
     } catch (error) {
+      console.error("❌ Message sanitization failed:", error.message);
       return res.status(400).json({ message: error.message });
     }
+
+    // Verify conversation exists
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      console.error("❌ Conversation not found:", conversationId);
+      return res.status(404).json({ message: "Conversation not found" });
+    }
+
+    console.log("💬 Creating message...");
 
     // Create message
     const newMessage = await Message.create({
@@ -147,6 +178,8 @@ export const sendMessage = async (req, res) => {
       senderName: `${user.firstName} ${user.lastName}`,
       message: sanitizedMessage,
     });
+
+    console.log("✅ Message created:", newMessage._id);
 
     // Update conversation
     await Conversation.findByIdAndUpdate(conversationId, {
@@ -159,20 +192,22 @@ export const sendMessage = async (req, res) => {
     const io = req.app.get("io");
     if (user.isAdmin) {
       // Admin reply - emit to user
-      const conversation = await Conversation.findById(conversationId);
       io.to(`user_${conversation.userId}`).emit(
         "new_admin_message",
         newMessage
       );
+      console.log("📤 Emitted to user:", conversation.userId);
     } else {
       // User message - emit to admin
       io.to("admin_room").emit("new_message", newMessage);
+      console.log("📤 Emitted to admin_room");
     }
 
     res.status(201).json(newMessage);
   } catch (error) {
-    console.error("Send message error:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("❌ Send message error:", error);
+    console.error("Error stack:", error.stack);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -238,6 +273,26 @@ export const closeConversation = async (req, res) => {
     res.json({ message: "Conversation closed" });
   } catch (error) {
     console.error("Close conversation error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Reopen conversation (Admin only)
+export const reopenConversation = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+
+    const conversation = await Conversation.findByIdAndUpdate(
+      conversationId,
+      {
+        status: "active",
+      },
+      { new: true }
+    );
+
+    res.json(conversation);
+  } catch (error) {
+    console.error("Reopen conversation error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

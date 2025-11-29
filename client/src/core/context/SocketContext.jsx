@@ -52,23 +52,8 @@ export const SocketProvider = ({ children }) => {
       setIsConnected(false);
     });
 
-    // Listen for new messages (for unread count only)
-    // Note: AdminChat and ChatBox components handle displaying messages
-    newSocket.on("new_message", (message) => {
-      console.log("📨 SocketContext: New message received (for unread count)");
-      // Only increment unread if chat is not open
-      // ChatBox/AdminChat will handle message display
-      setUnreadCount((prev) => prev + 1);
-    });
-
-    newSocket.on("new_admin_message", (message) => {
-      console.log(
-        "📨 SocketContext: New admin message received (for unread count)"
-      );
-      // Only increment unread if chat is not open
-      // ChatBox will handle message display
-      setUnreadCount((prev) => prev + 1);
-    });
+    // Note: Message display is handled by ChatBox and AdminChat components
+    // These listeners are only for unread count when chat is CLOSED
 
     setSocket(newSocket);
 

@@ -56,7 +56,7 @@ export const validatePasswordStrength = (password) => {
   }
 
   // Check special characters
-  if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+  if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
     score += 10;
   } else {
     feedback.push("Ít nhất 1 ký tự đặc biệt");

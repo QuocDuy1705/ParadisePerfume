@@ -5,7 +5,7 @@ import api from "../../core/utils/api";
 import "../../assets/styles/chat.css";
 
 const ChatBox = ({ onClose }) => {
-  const { socket, isConnected, resetUnreadCount, sendMessage } = useSocket();
+  const { socket, isConnected, resetUnreadCount } = useSocket();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [conversationId, setConversationId] = useState(null);
@@ -37,6 +37,9 @@ const ChatBox = ({ onClose }) => {
   useEffect(() => {
     const loadChat = async () => {
       try {
+        // Reset unread count when opening chat
+        resetUnreadCount();
+
         // Get or create conversation
         const convRes = await api.get("/chat/conversation");
         const conv = convRes.data;
@@ -52,7 +55,6 @@ const ChatBox = ({ onClose }) => {
 
         // Mark as read
         await api.put(`/chat/messages/${conv._id}/read`);
-        resetUnreadCount();
       } catch (error) {
         console.error("Load chat error:", error);
       } finally {
@@ -106,7 +108,9 @@ const ChatBox = ({ onClose }) => {
 
         console.log("✅ Adding admin message to list");
         return [...prev, message];
-      }); // Mark as read if chat is open - use ref
+      });
+
+      // Mark as read immediately since chat is open
       const currentConvId = conversationIdRef.current;
       if (currentConvId) {
         api.put(`/chat/messages/${currentConvId}/read`).catch(console.error);
@@ -170,25 +174,35 @@ const ChatBox = ({ onClose }) => {
   const handleSend = async () => {
     if (!newMessage.trim() || !conversationId || sending) return;
 
+    const messageText = newMessage.trim();
     setSending(true);
+
+    // Clear input immediately for better UX
+    setNewMessage("");
+
     try {
-      // Send via API
+      // Send via API (this will emit socket event on server side)
       const res = await api.post("/chat/messages", {
         conversationId,
-        message: newMessage.trim(),
+        message: messageText,
       });
 
-      // Also send via Socket.IO for realtime
+      // Add the message from API response (server will emit to admin)
+      setMessages((prev) => {
+        // Check if message already exists
+        const exists = prev.some((msg) => msg._id === res.data._id);
+        if (exists) return prev;
+        return [...prev, res.data];
+      });
+
+      // Stop typing indicator
       if (socket && isConnected) {
-        sendMessage(conversationId, newMessage.trim());
-        // Stop typing indicator after sending
         socket.emit("stop_typing", { conversationId });
       }
-
-      setMessages((prev) => [...prev, res.data]);
-      setNewMessage("");
     } catch (error) {
       console.error("Send message error:", error);
+      // Restore message on error
+      setNewMessage(messageText);
     } finally {
       setSending(false);
     }
@@ -237,12 +251,18 @@ const ChatBox = ({ onClose }) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // Add message to UI
-      setMessages((prev) => [...prev, res.data]);
-      setSelectedFile(null);
+      // Add message to UI (server will emit to admin via socket)
+      setMessages((prev) => {
+        // Check if message already exists
+        const exists = prev.some((msg) => msg._id === res.data._id);
+        if (exists) return prev;
+        return [...prev, res.data];
+      });
 
-      // Also emit via socket for realtime
-      sendMessage(conversationId, res.data.message);
+      setSelectedFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
       console.error("Upload error:", error);
       alert(error.response?.data?.message || "Lỗi upload file");

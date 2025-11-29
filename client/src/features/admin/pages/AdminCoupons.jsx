@@ -35,6 +35,7 @@ const AdminCoupons = () => {
 
   useEffect(() => {
     fetchCoupons();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchCoupons = async () => {

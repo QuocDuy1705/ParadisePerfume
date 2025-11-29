@@ -7,7 +7,6 @@ import {
   Send,
   X,
   Check,
-  CheckCheck,
   User,
   Paperclip,
   Image as ImageIcon,
@@ -76,9 +75,14 @@ const AdminChat = () => {
       );
       // Handle new pagination response format
       const messageData = response.data;
-      setMessages(
-        Array.isArray(messageData) ? messageData : messageData.messages || []
-      );
+      const messagesArray = Array.isArray(messageData)
+        ? messageData
+        : messageData.messages || [];
+
+      console.log("📥 Fetched messages:", messagesArray);
+      console.log("📥 First message sample:", messagesArray[0]);
+
+      setMessages(messagesArray);
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -124,12 +128,27 @@ const AdminChat = () => {
     fetchConversations();
   }, []);
 
+  // Join admin room when socket connects
+  useEffect(() => {
+    if (socket && isConnected) {
+      console.log("🔌 AdminChat: Joining admin_room");
+      socket.emit("join_admin_room");
+
+      return () => {
+        console.log("🔌 AdminChat: Leaving admin_room");
+        socket.emit("leave_admin_room");
+      };
+    }
+  }, [socket, isConnected]);
+
   // Listen for new messages via Socket.IO
   useEffect(() => {
     if (!socket) return;
 
     const handleNewMessage = (data) => {
       console.log("📨 AdminChat: Received new message:", data);
+      console.log("📨 Message content field:", data.message);
+      console.log("📨 Full message object keys:", Object.keys(data));
 
       // Update conversation list
       fetchConversations();
@@ -210,6 +229,25 @@ const AdminChat = () => {
 
   // Handle conversation selection
   const handleSelectConversation = async (conversation) => {
+    // If conversation is closed, reopen it first
+    if (conversation.status === "closed") {
+      try {
+        const token = localStorage.getItem("token");
+        await axios.put(
+          `http://localhost:5000/api/chat/conversations/${conversation._id}/reopen`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        // Update local state
+        conversation.status = "active";
+        fetchConversations(); // Refresh list
+      } catch (error) {
+        console.error("Error reopening conversation:", error);
+      }
+    }
+
     setSelectedConversation(conversation);
     await fetchMessages(conversation._id);
     await markAsRead(conversation._id);
@@ -243,15 +281,25 @@ const AdminChat = () => {
     e.preventDefault();
     if (!inputMessage.trim() || !selectedConversation) return;
 
-    // Extract userId - handle both string and object formats
-    const userId =
-      typeof selectedConversation.userId === "object"
-        ? selectedConversation.userId._id
-        : selectedConversation.userId;
+    // Extract userId - handle both populated object and string ID
+    let userId;
+    if (selectedConversation.userId) {
+      // If userId is an object (populated), get _id
+      userId =
+        typeof selectedConversation.userId === "object"
+          ? selectedConversation.userId._id
+          : selectedConversation.userId;
+    } else {
+      console.error(
+        "❌ No userId found in conversation:",
+        selectedConversation
+      );
+      return;
+    }
 
     const messageData = {
       conversationId: selectedConversation._id,
-      userId: userId, // Send only the ID string, not the object
+      userId: userId,
       message: inputMessage,
     };
 
@@ -261,39 +309,59 @@ const AdminChat = () => {
     console.log("🔌 Socket connected:", socket?.connected);
     console.log("📍 Socket ID:", socket?.id);
 
-    // Send via Socket.IO
-    sendAdminReply(messageData);
+    try {
+      // Send via API first to save to database
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://localhost:5000/api/chat/messages",
+        {
+          conversationId: selectedConversation._id,
+          message: inputMessage,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-    // Stop typing indicator after sending
-    if (socket && selectedConversation) {
-      socket.emit("admin_typing", {
-        conversationId: selectedConversation._id,
-        isTyping: false,
+      console.log("✅ Message saved to DB:", response.data);
+
+      // Add the actual saved message to UI
+      setMessages((prev) => {
+        // Check if message already exists
+        const exists = prev.some((msg) => msg._id === response.data._id);
+        if (exists) {
+          console.log("⚠️  Message already exists in UI");
+          return prev;
+        }
+        return [...prev, response.data];
       });
+
+      setInputMessage("");
+
+      // Stop typing indicator after sending
+      if (socket && selectedConversation) {
+        socket.emit("admin_typing", {
+          conversationId: selectedConversation._id,
+          isTyping: false,
+        });
+      }
+
+      // Update conversation last message
+      setConversations((prev) =>
+        prev.map((conv) =>
+          conv._id === selectedConversation._id
+            ? {
+                ...conv,
+                lastMessage: inputMessage,
+                lastMessageTime: new Date(),
+              }
+            : conv
+        )
+      );
+    } catch (error) {
+      console.error("❌ Error sending message:", error);
+      alert(error.response?.data?.message || "Lỗi gửi tin nhắn");
     }
-
-    // Optimistically add to messages
-    const newMessage = {
-      _id: Date.now().toString(),
-      conversationId: selectedConversation._id,
-      senderType: "admin",
-      senderName: "Admin",
-      message: inputMessage,
-      createdAt: new Date(),
-      isRead: false,
-    };
-
-    setMessages((prev) => [...prev, newMessage]);
-    setInputMessage("");
-
-    // Update conversation last message
-    setConversations((prev) =>
-      prev.map((conv) =>
-        conv._id === selectedConversation._id
-          ? { ...conv, lastMessage: inputMessage, lastMessageTime: new Date() }
-          : conv
-      )
-    );
   };
 
   // Handle file selection
@@ -505,68 +573,111 @@ const AdminChat = () => {
                     <p>Chưa có tin nhắn nào</p>
                   </div>
                 ) : (
-                  messages.map((msg, index) => (
-                    <div
-                      key={msg._id || index}
-                      className={`message ${msg.senderType}`}
-                    >
-                      <div className="message-content">
-                        <div className="message-bubble">
-                          {msg.fileUrl && (
-                            <div
-                              className="message-file"
-                              style={{ marginBottom: "8px" }}
-                            >
-                              {msg.fileType === "image" ? (
-                                <img
-                                  src={`http://localhost:5000${msg.fileUrl}`}
-                                  alt={msg.fileName}
-                                  style={{
-                                    maxWidth: "300px",
-                                    borderRadius: "8px",
-                                    display: "block",
-                                  }}
-                                />
-                              ) : (
-                                <a
-                                  href={`http://localhost:5000${msg.fileUrl}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  style={{
-                                    color: "#007bff",
-                                    textDecoration: "none",
-                                  }}
-                                >
-                                  📎 {msg.fileName}
-                                </a>
-                              )}
-                            </div>
-                          )}
-                          <p>{msg.message}</p>
-                          <div className="message-footer">
-                            <span className="message-time">
-                              {new Date(msg.createdAt).toLocaleTimeString(
-                                "vi-VN",
-                                {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                }
-                              )}
-                            </span>
-                            {msg.senderType === "admin" && (
-                              <span className="message-status">
-                                {msg.isRead ? (
-                                  <CheckCheck size={14} />
+                  messages.map((msg, index) => {
+                    // Debug log for each message
+                    console.log(`Message ${index}:`, {
+                      _id: msg._id,
+                      message: msg.message?.substring(0, 20),
+                      senderType: msg.senderType,
+                      senderId: msg.senderId,
+                      className: `message ${msg.senderType}`,
+                    });
+
+                    return (
+                      <div
+                        key={msg._id || index}
+                        style={{
+                          display: "flex",
+                          width: "100%",
+                          justifyContent:
+                            msg.senderType === "user"
+                              ? "flex-start"
+                              : "flex-end",
+                          marginBottom: "20px",
+                          alignItems:
+                            msg.senderType === "user"
+                              ? "flex-start"
+                              : "flex-end",
+                        }}
+                      >
+                        <div style={{ maxWidth: "60%" }}>
+                          <div
+                            style={{
+                              padding: "12px 16px",
+                              borderRadius: "18px",
+                              background:
+                                msg.senderType === "user" ? "#f5f5f5" : "#000",
+                              color:
+                                msg.senderType === "user" ? "#000" : "#fff",
+                              border:
+                                msg.senderType === "user"
+                                  ? "1px solid #e0e0e0"
+                                  : "none",
+                              borderBottomLeftRadius:
+                                msg.senderType === "user" ? "4px" : "18px",
+                              borderBottomRightRadius:
+                                msg.senderType === "admin" ? "4px" : "18px",
+                            }}
+                          >
+                            {msg.fileUrl && (
+                              <div
+                                className="message-file"
+                                style={{ marginBottom: "8px" }}
+                              >
+                                {msg.fileType === "image" ? (
+                                  <img
+                                    src={`http://localhost:5000${msg.fileUrl}`}
+                                    alt={msg.fileName}
+                                    style={{
+                                      maxWidth: "300px",
+                                      borderRadius: "8px",
+                                      display: "block",
+                                    }}
+                                  />
                                 ) : (
-                                  <Check size={14} />
+                                  <a
+                                    href={`http://localhost:5000${msg.fileUrl}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                      color: "#007bff",
+                                      textDecoration: "none",
+                                    }}
+                                  >
+                                    📎 {msg.fileName}
+                                  </a>
+                                )}
+                              </div>
+                            )}
+                            <p>{msg.message || "[No message content]"}</p>
+                            <div className="message-footer">
+                              <span className="message-time">
+                                {new Date(msg.createdAt).toLocaleTimeString(
+                                  "vi-VN",
+                                  {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  }
                                 )}
                               </span>
-                            )}
+                              {msg.senderType === "admin" && (
+                                <span className="message-status">
+                                  {msg.isRead ? (
+                                    <Check
+                                      size={14}
+                                      style={{ color: "#4CAF50" }}
+                                    />
+                                  ) : (
+                                    <Check size={14} />
+                                  )}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
                 {isUserTyping && (
                   <div

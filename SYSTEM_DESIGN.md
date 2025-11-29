@@ -15,15 +15,229 @@
 
 ### 1.1. Actors (Tác nhân)
 
-- **Guest (Khách vãng lai)**: Người dùng chưa đăng nhập
-- **Customer (Khách hàng)**: Người dùng đã đăng ký
-- **Admin (Quản trị viên)**: Người quản lý hệ thống
-- **AI System**: Hệ thống AI gợi ý sản phẩm
-- **Payment Gateway**: Cổng thanh toán VNPay/MoMo
+- **Khách vãng lai (Guest)**: Người dùng chưa đăng nhập vào hệ thống
+- **Khách hàng đã đăng nhập (Customer)**: Người dùng đã đăng ký và đăng nhập
+- **Admin (Quản trị viên)**: Người quản lý hệ thống (bao gồm cả Nhân viên)
+- **Hệ thống**: Bảng nhập (Database), AI System, Payment Gateway
 
-### 1.2. Use Cases
+### 1.2. Use Cases Tổng Quát
 
-#### **GUEST Use Cases**
+```
+╔════════════════════════════════════════════════════════════════════════════╗
+║                     HỆ THỐNG PARADISE PERFUME                              ║
+║                      USE CASE DIAGRAM TỔNG QUÁT                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────┐                                    ┌─────────────────────┐
+│                  │                                    │                     │
+│     ADMIN        │◄───────────────────────────────────┤  Khách hàng đã      │
+│   (Quản trị)     │                                    │  đăng nhập          │
+│                  │                                    │                     │
+└────────┬─────────┘                                    └──────────┬──────────┘
+         │                                                         │
+         │                                                         │
+         ├─── Quản lý sản phẩm                                   ├─── Quản lý đơn hàng cá nhân
+         │                                                         │
+         ├─── Quản lý hàng tồn                                   ├─── Quản lý thông tin cá nhân
+         │                                                         │
+         ├─── Quản lý người dùng                          ┌───────┼─── Xem lịch sử mua hàng
+         │                                                │        │
+         ├─── Quản lý danh mục                            │        ├─── Quản lý danh sách địa chỉ
+         │                                                │        │
+         ├─── Quản lý nhân hàng                           │        ├─── Đăng ký tài khoản
+         │                                                │        │
+         ├─── Quản lý chủ đề                              │        ├─── Đăng nhập thanh toán
+         │                                                │        │
+         ├─── Quản lý bài đăng                            │        ├─── Thêm sản phẩm vào giỏ hàng
+         │                                                │        │
+         ├─── Quản lý khuyến mãi                          │        ├─── Bình luận đánh giá
+         │                 ┌──────────────┐               │        │
+         ├─── Quản lý loại khuyến mãi     │               │        └─── Xem danh sách sản phẩm
+         │                 │              │               │                     │
+         ├─── Quản lý blog │              │               │                     │
+         │                 │              │               │        ┌────────────┴─────────────┐
+         ├─── Quản lý đơn hàng ◄──────────┘               │        │                          │
+         │                                                │        │     Khách vãng lai       │
+         ├─── Quản lý nhà cung cấp                        │        │        (Guest)           │
+         │                                                │        │                          │
+         └─── Quản lý phiếu nhập                          │        └──────────┬───────────────┘
+                                                          │                   │
+                                                          │                   │
+                                                          │                   ├─── Xem sản phẩm bài đăng
+                                                          │                   │
+                                                          │                   └─── Xem lọc bài đăng
+                                                          │
+                                                          │
+                                      ┌───────────────────┴────────────────────┐
+                                      │                                        │
+                                      │         BẢNG NHẬP                      │
+                                      │       (Database System)                │
+                                      │                                        │
+                                      └────────────────────────────────────────┘
+
+```
+
+### 1.3. Chi tiết Use Cases theo Actor
+
+### 1.3. Chi tiết Use Cases theo Actor
+
+#### **ADMIN (Quản trị viên/Nhân viên) Use Cases**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        ADMIN                                 │
+├─────────────────────────────────────────────────────────────┤
+│ QUẢN LÝ SẢN PHẨM:                                           │
+│ 1. Thêm sản phẩm mới                                        │
+│ 2. Sửa thông tin sản phẩm                                   │
+│ 3. Xóa sản phẩm                                             │
+│ 4. Xem danh sách sản phẩm                                   │
+│                                                              │
+│ QUẢN LÝ HÀNG TỒN (KHO):                                     │
+│ 5. Xem tồn kho sản phẩm                                     │
+│ 6. Cập nhật số lượng tồn                                    │
+│ 7. Cảnh báo hết hàng                                        │
+│                                                              │
+│ QUẢN LÝ NGƯỜI DÙNG:                                         │
+│ 8. Xem danh sách người dùng                                 │
+│ 9. Khóa/Mở khóa tài khoản                                   │
+│ 10. Phân quyền (Admin/Customer)                            │
+│                                                              │
+│ QUẢN LÝ DANH MỤC:                                           │
+│ 11. Thêm danh mục (Category)                               │
+│ 12. Sửa danh mục                                            │
+│ 13. Xóa danh mục                                            │
+│                                                              │
+│ QUẢN LÝ NHÃN HÀNG (BRAND):                                  │
+│ 14. Thêm thương hiệu                                        │
+│ 15. Sửa thông tin thương hiệu                               │
+│ 16. Xóa thương hiệu                                         │
+│                                                              │
+│ QUẢN LÝ CHỦ ĐỀ (TAGS):                                     │
+│ 17. Tạo tag/chủ đề                                          │
+│ 18. Gán tag cho sản phẩm/blog                              │
+│                                                              │
+│ QUẢN LÝ BÀI ĐĂNG (BLOG):                                    │
+│ 19. Tạo bài viết blog                                       │
+│ 20. Sửa/Xóa bài viết                                        │
+│ 21. Quản lý nội dung (TinyMCE)                              │
+│ 22. Xuất bản/Ẩn bài viết                                    │
+│                                                              │
+│ QUẢN LÝ KHUYẾN MÃI (COUPON):                                │
+│ 23. Tạo mã giảm giá                                         │
+│ 24. Sửa/Xóa coupon                                          │
+│ 25. Theo dõi sử dụng coupon                                 │
+│                                                              │
+│ QUẢN LÝ LOẠI KHUYẾN MÃI:                                    │
+│ 26. Giảm giá theo %                                         │
+│ 27. Giảm giá cố định                                        │
+│ 28. Freeship                                                 │
+│ 29. Mua X tặng Y                                            │
+│                                                              │
+│ QUẢN LÝ ĐƠN HÀNG:                                           │
+│ 30. Xem tất cả đơn hàng                                     │
+│ 31. Cập nhật trạng thái đơn (Pending→Processing→Shipping   │
+│     →Delivered→Cancelled)                                   │
+│ 32. Xác nhận thanh toán                                     │
+│ 33. Hủy đơn hàng                                            │
+│ 34. Xuất hóa đơn/In đơn hàng                                │
+│                                                              │
+│ QUẢN LÝ NHÀ CUNG CẤP:                                       │
+│ 35. Thêm nhà cung cấp                                       │
+│ 36. Sửa thông tin nhà cung cấp                              │
+│ 37. Quản lý hợp đồng                                        │
+│                                                              │
+│ QUẢN LÝ PHIẾU NHẬP:                                         │
+│ 38. Tạo phiếu nhập hàng                                     │
+│ 39. Xác nhận nhập kho                                       │
+│ 40. Cập nhật tồn kho sau nhập                               │
+│                                                              │
+│ THỐNG KÊ & BÁO CÁO:                                         │
+│ 41. Dashboard tổng quan                                     │
+│ 42. Thống kê doanh thu                                      │
+│ 43. Thống kê sản phẩm bán chạy                              │
+│ 44. Thống kê người dùng                                     │
+│ 45. Báo cáo tồn kho                                         │
+│                                                              │
+│ CHAT & HỖ TRỢ:                                              │
+│ 46. Chat real-time với khách hàng                           │
+│ 47. Trả lời câu hỏi                                         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### **KHÁCH HÀNG ĐÃ ĐĂNG NHẬP Use Cases**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│              KHÁCH HÀNG ĐÃ ĐĂNG NHẬP                        │
+├─────────────────────────────────────────────────────────────┤
+│ QUẢN LÝ ĐƠN HÀNG CÁ NHÂN:                                   │
+│ 1. Xem lịch sử đơn hàng                                     │
+│ 2. Xem chi tiết đơn hàng                                    │
+│ 3. Hủy đơn hàng (nếu status = pending)                     │
+│ 4. Theo dõi trạng thái giao hàng                            │
+│                                                              │
+│ QUẢN LÝ THÔNG TIN CÁ NHÂN:                                  │
+│ 5. Xem thông tin tài khoản                                  │
+│ 6. Cập nhật profile (tên, SĐT, địa chỉ)                    │
+│ 7. Đổi mật khẩu                                             │
+│ 8. Upload avatar                                             │
+│                                                              │
+│ XEM LỊCH SỬ MUA HÀNG:                                       │
+│ 9. Xem tất cả đơn đã đặt                                    │
+│ 10. Lọc theo trạng thái                                     │
+│ 11. Tìm kiếm đơn hàng                                       │
+│ 12. Tải hóa đơn                                             │
+│                                                              │
+│ QUẢN LÝ DANH SÁCH ĐỊA CHỈ:                                  │
+│ 13. Thêm địa chỉ giao hàng mới                              │
+│ 14. Sửa địa chỉ                                             │
+│ 15. Xóa địa chỉ                                             │
+│ 16. Đặt địa chỉ mặc định                                    │
+│ 17. Lưu nhiều địa chỉ (nhà, cty, khác)                     │
+│                                                              │
+│ ĐĂNG KÝ TÀI KHOẢN:                                          │
+│ 18. Đăng ký bằng email/password                             │
+│ 19. Xác thực email                                          │
+│ 20. Tạo profile ban đầu                                     │
+│                                                              │
+│ ĐĂNG NHẬP/THANH TOÁN:                                       │
+│ 21. Đăng nhập hệ thống                                      │
+│ 22. Checkout - Thanh toán đơn hàng                         │
+│ 23. Chọn phương thức thanh toán (COD/VNPay/MoMo/TP Bank)   │
+│ 24. Xác nhận thanh toán online                              │
+│ 25. Áp dụng mã giảm giá                                     │
+│                                                              │
+│ THÊM SẢN PHẨM VÀO GIỎ HÀNG:                                 │
+│ 26. Thêm sản phẩm vào giỏ                                   │
+│ 27. Cập nhật số lượng                                       │
+│ 28. Xóa sản phẩm khỏi giỏ                                   │
+│ 29. Lưu giỏ hàng (sync với server)                         │
+│                                                              │
+│ BÌNH LUẬN ĐÁNH GIÁ:                                         │
+│ 30. Viết review sản phẩm (1-5 sao)                         │
+│ 31. Upload hình ảnh review                                  │
+│ 32. Sửa/Xóa review của mình                                 │
+│ 33. Xem review người khác                                   │
+│                                                              │
+│ XEM DANH SÁCH SẢN PHẨM:                                     │
+│ 34. Browse tất cả sản phẩm                                  │
+│ 35. Xem chi tiết sản phẩm                                   │
+│ 36. Tìm kiếm sản phẩm                                       │
+│ 37. Lọc theo giá, category, brand                          │
+│ 38. Sắp xếp (giá, rating, mới nhất)                        │
+│ 39. Thêm vào Wishlist (Yêu thích)                          │
+│ 40. Sử dụng AI tư vấn (Quiz/Chatbot)                       │
+│                                                              │
+│ TÍNH NĂNG BỔ SUNG:                                          │
+│ 41. Chat với Admin                                          │
+│ 42. Nhận thông báo đơn hàng                                 │
+│ 43. Xem blog nước hoa                                       │
+│ 44. So sánh sản phẩm                                        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### **KHÁCH VÃNG LAI (Guest) Use Cases**
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
