@@ -1,0 +1,212 @@
+@startuml Paradise_Perfume_Use_Case_Diagram
+
+' ====================================
+' PARADISE PERFUME USE CASE DIAGRAM
+' ====================================
+
+left to right direction
+skinparam packageStyle rectangle
+
+' Styling
+skinparam actor {
+  BackgroundColor #E8F5E9
+  BorderColor #2E7D32
+  FontSize 12
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #000000
+  FontSize 11
+  ArrowColor #000000
+}
+
+skinparam rectangle {
+  BackgroundColor #F5F5F5
+  BorderColor #000000
+  FontSize 13
+  FontStyle bold
+}
+
+' ====================================
+' ACTORS
+' ====================================
+
+actor "Guest\n(Khách vãng lai)" as Guest #LightBlue
+actor "Customer\n(Khách hàng)" as Customer #LightGreen
+actor "Admin\n(Quản trị viên)" as Admin #LightCoral
+
+' Customer kế thừa Guest
+Guest <|-- Customer
+
+' ====================================
+' SYSTEM BOUNDARY
+' ====================================
+
+rectangle "Paradise Perfume E-Commerce System" {
+  
+  ' ====================================
+  ' GUEST USE CASES (Blue)
+  ' ====================================
+  
+  package "Guest Module" #E3F2FD {
+    usecase "UC-01\nXem Danh Sách\nSản Phẩm" as UC01 #BBDEFB
+    usecase "UC-02\nTìm Kiếm\nSản Phẩm" as UC02 #BBDEFB
+    usecase "UC-03\nXem Chi Tiết\nSản Phẩm" as UC03 #BBDEFB
+    usecase "UC-04\nXem Blog" as UC04 #BBDEFB
+    usecase "UC-05\nĐăng Ký\nTài Khoản" as UC05 #BBDEFB
+    usecase "UC-06\nĐăng Nhập" as UC06 #BBDEFB
+  }
+  
+  ' ====================================
+  ' CUSTOMER USE CASES (Green)
+  ' ====================================
+  
+  package "Customer Module" #E8F5E9 {
+    usecase "UC-07\nThêm Vào\nGiỏ Hàng" as UC07 #C8E6C9
+    usecase "UC-08\nQuản Lý\nGiỏ Hàng" as UC08 #C8E6C9
+    usecase "UC-09\nĐặt Hàng" as UC09 #C8E6C9
+    usecase "UC-10\nThanh Toán\nVNPay" as UC10 #C8E6C9
+    usecase "UC-11\nThanh Toán\nCOD" as UC11 #C8E6C9
+    usecase "UC-12\nXem Lịch Sử\nĐơn Hàng" as UC12 #C8E6C9
+    usecase "UC-13\nĐánh Giá\nSản Phẩm" as UC13 #C8E6C9
+    usecase "UC-14\nSử Dụng\nAI Chatbot" as UC14 #C8E6C9
+    usecase "UC-15\nNhận AI\nRecommendation" as UC15 #C8E6C9
+    usecase "UC-16\nQuản Lý\nWishlist" as UC16 #C8E6C9
+    usecase "UC-17\nCập Nhật\nThông Tin" as UC17 #C8E6C9
+    usecase "UC-18\nChat Với\nAdmin" as UC18 #C8E6C9
+    usecase "UC-19\nSử Dụng\nCoupon" as UC19 #C8E6C9
+  }
+  
+  ' ====================================
+  ' ADMIN USE CASES (Red)
+  ' ====================================
+  
+  package "Admin Module" #FFEBEE {
+    usecase "UC-20\nQuản Lý\nSản Phẩm (CRUD)" as UC20 #FFCDD2
+    usecase "UC-21\nQuản Lý\nĐơn Hàng" as UC21 #FFCDD2
+    usecase "UC-22\nQuản Lý\nNgười Dùng" as UC22 #FFCDD2
+    usecase "UC-23\nQuản Lý\nBlog" as UC23 #FFCDD2
+    usecase "UC-24\nQuản Lý\nCoupon" as UC24 #FFCDD2
+    usecase "UC-25\nXem Thống Kê\nDoanh Thu" as UC25 #FFCDD2
+    usecase "UC-26\nXem Báo Cáo\nPhân Tích" as UC26 #FFCDD2
+    usecase "UC-27\nChat Với\nKhách Hàng" as UC27 #FFCDD2
+  }
+  
+  ' ====================================
+  ' HELPER USE CASES
+  ' ====================================
+  
+  usecase "Upload Image" as UploadImage #FFE0B2
+  usecase "Send Email" as SendEmail #FFE0B2
+  usecase "Validate Data" as ValidateData #FFE0B2
+}
+
+' ====================================
+' GUEST ASSOCIATIONS
+' ====================================
+
+Guest --> UC01
+Guest --> UC02
+Guest --> UC03
+Guest --> UC04
+Guest --> UC05
+Guest --> UC06
+
+' ====================================
+' CUSTOMER ASSOCIATIONS
+' ====================================
+
+Customer --> UC07
+Customer --> UC08
+Customer --> UC09
+Customer --> UC12
+Customer --> UC13
+Customer --> UC14
+Customer --> UC15
+Customer --> UC16
+Customer --> UC17
+Customer --> UC18
+
+' ====================================
+' ADMIN ASSOCIATIONS
+' ====================================
+
+Admin --> UC20
+Admin --> UC21
+Admin --> UC22
+Admin --> UC23
+Admin --> UC24
+Admin --> UC25
+Admin --> UC26
+Admin --> UC27
+
+' ====================================
+' INCLUDE RELATIONSHIPS
+' ====================================
+
+UC09 .> UC10 : <<include>>
+UC09 .> UC11 : <<include>>
+UC08 .> UC19 : <<include>>
+UC20 .> UploadImage : <<include>>
+UC05 .> SendEmail : <<include>>
+UC09 .> SendEmail : <<include>>
+UC05 .> ValidateData : <<include>>
+UC06 .> ValidateData : <<include>>
+
+' ====================================
+' EXTEND RELATIONSHIPS
+' ====================================
+
+UC14 .> UC03 : <<extend>>
+UC15 .> UC01 : <<extend>>
+UC16 .> UC03 : <<extend>>
+
+' ====================================
+' NOTES
+' ====================================
+
+note right of Guest
+  **Guest (Khách vãng lai)**
+  - Chưa đăng nhập
+  - Chỉ xem sản phẩm, blog
+  - Không thể mua hàng
+end note
+
+note right of Customer
+  **Customer (Khách hàng)**
+  - Đã đăng ký, đăng nhập
+  - Mua hàng, đặt hàng
+  - Sử dụng AI features
+end note
+
+note left of Admin
+  **Admin (Quản trị viên)**
+  - Quản lý toàn bộ hệ thống
+  - Xem thống kê, báo cáo
+  - Chat hỗ trợ khách hàng
+end note
+
+note bottom of UC09
+  Đặt hàng bao gồm
+  thanh toán VNPay
+  hoặc COD
+end note
+
+note bottom of UC14
+  AI Chatbot mở rộng
+  từ xem chi tiết
+  sản phẩm
+end note
+
+note bottom of UC25
+  Thống kê có bộ lọc:
+  - 7 ngày
+  - Tháng này
+  - Quý này
+  - Năm nay
+  - Custom range
+end note
+
+@enduml

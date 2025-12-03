@@ -147,4 +147,339 @@ router.get("/stats", async (req, res) => {
   }
 });
 
+// 📊 Thống kê chi tiết với hỗ trợ bộ lọc thời gian
+router.get("/analytics", verifyToken, isAdmin, async (req, res) => {
+  try {
+    const now = new Date();
+    const { timeRange, startDate, endDate } = req.query;
+
+    // Xác định khoảng thời gian
+    let currentPeriodStart,
+      currentPeriodEnd,
+      previousPeriodStart,
+      previousPeriodEnd;
+
+    if (startDate && endDate) {
+      // Custom range
+      currentPeriodStart = new Date(startDate);
+      currentPeriodEnd = new Date(endDate);
+      const diff = currentPeriodEnd - currentPeriodStart;
+      previousPeriodEnd = new Date(currentPeriodStart);
+      previousPeriodStart = new Date(currentPeriodStart.getTime() - diff);
+    } else {
+      switch (timeRange) {
+        case "week":
+          currentPeriodEnd = new Date(now);
+          currentPeriodStart = new Date(
+            now.getTime() - 7 * 24 * 60 * 60 * 1000
+          );
+          previousPeriodEnd = new Date(currentPeriodStart);
+          previousPeriodStart = new Date(
+            currentPeriodStart.getTime() - 7 * 24 * 60 * 60 * 1000
+          );
+          break;
+        case "month":
+          currentPeriodStart = new Date(now.getFullYear(), now.getMonth(), 1);
+          currentPeriodEnd = new Date(
+            now.getFullYear(),
+            now.getMonth() + 1,
+            0,
+            23,
+            59,
+            59
+          );
+          previousPeriodStart = new Date(
+            now.getFullYear(),
+            now.getMonth() - 1,
+            1
+          );
+          previousPeriodEnd = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            0,
+            23,
+            59,
+            59
+          );
+          break;
+        case "quarter":
+          const currentQuarter = Math.floor(now.getMonth() / 3);
+          currentPeriodStart = new Date(
+            now.getFullYear(),
+            currentQuarter * 3,
+            1
+          );
+          currentPeriodEnd = new Date(
+            now.getFullYear(),
+            (currentQuarter + 1) * 3,
+            0,
+            23,
+            59,
+            59
+          );
+          previousPeriodStart = new Date(
+            now.getFullYear(),
+            (currentQuarter - 1) * 3,
+            1
+          );
+          previousPeriodEnd = new Date(
+            now.getFullYear(),
+            currentQuarter * 3,
+            0,
+            23,
+            59,
+            59
+          );
+          break;
+        case "year":
+        default:
+          currentPeriodStart = new Date(now.getFullYear(), 0, 1);
+          currentPeriodEnd = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+          previousPeriodStart = new Date(now.getFullYear() - 1, 0, 1);
+          previousPeriodEnd = new Date(
+            now.getFullYear() - 1,
+            11,
+            31,
+            23,
+            59,
+            59
+          );
+      }
+    }
+
+    // 1. Thống kê doanh thu theo tháng (kỳ hiện tại)
+    const monthlyRevenue = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: currentPeriodStart,
+            $lte: currentPeriodEnd,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: "$createdAt" },
+          revenue: { $sum: "$totalPrice" },
+          orders: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    // Thống kê kỳ trước
+    const previousMonthlyRevenue = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: previousPeriodStart,
+            $lte: previousPeriodEnd,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          revenue: { $sum: "$totalPrice" },
+          orders: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // 2. Thống kê khách hàng đăng ký theo tháng
+    const monthlyUsers = await User.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: currentPeriodStart,
+            $lte: currentPeriodEnd,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: "$createdAt" },
+          users: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    // Thống kê kỳ trước
+    const previousMonthlyUsers = await User.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: previousPeriodStart,
+            $lte: previousPeriodEnd,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          users: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // 3. Top sản phẩm bán chạy nhất (trong kỳ hiện tại)
+    const topProducts = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: currentPeriodStart,
+            $lte: currentPeriodEnd,
+          },
+        },
+      },
+      { $unwind: "$items" },
+      {
+        $group: {
+          _id: "$items.productId",
+          totalSold: { $sum: "$items.quantity" },
+          revenue: {
+            $sum: { $multiply: ["$items.price", "$items.quantity"] },
+          },
+        },
+      },
+      { $sort: { totalSold: -1 } },
+      { $limit: 10 },
+    ]);
+
+    // Populate thông tin sản phẩm
+    const topProductsWithDetails = await Product.populate(topProducts, {
+      path: "_id",
+      select: "name image price",
+    });
+
+    // 4. Sản phẩm ít bán nhất (trong kỳ hiện tại)
+    const worstProducts = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: currentPeriodStart,
+            $lte: currentPeriodEnd,
+          },
+        },
+      },
+      { $unwind: "$items" },
+      {
+        $group: {
+          _id: "$items.productId",
+          totalSold: { $sum: "$items.quantity" },
+          revenue: {
+            $sum: { $multiply: ["$items.price", "$items.quantity"] },
+          },
+        },
+      },
+      { $sort: { totalSold: 1 } },
+      { $limit: 10 },
+    ]);
+
+    const worstProductsWithDetails = await Product.populate(worstProducts, {
+      path: "_id",
+      select: "name image price",
+    });
+
+    // 5. Tìm sản phẩm chưa bán được
+    const soldProductIds = await Order.aggregate([
+      { $unwind: "$items" },
+      { $group: { _id: "$items.productId" } },
+    ]);
+
+    const soldIds = soldProductIds.map((p) => p._id);
+    const unsoldProducts = await Product.find({
+      _id: { $nin: soldIds },
+    })
+      .select("name image price stock")
+      .limit(10);
+
+    // 6. Tổng hợp thống kê kỳ hiện tại
+    const currentPeriodStats = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: currentPeriodStart,
+            $lte: currentPeriodEnd,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          revenue: { $sum: "$totalPrice" },
+          orders: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const currentPeriodUsersCount = await User.countDocuments({
+      createdAt: {
+        $gte: currentPeriodStart,
+        $lte: currentPeriodEnd,
+      },
+    });
+
+    // 7. Tính toán % thay đổi so với kỳ trước
+    const currentRevenue = currentPeriodStats[0]?.revenue || 0;
+    const currentOrders = currentPeriodStats[0]?.orders || 0;
+    const currentUsers = currentPeriodUsersCount;
+
+    const previousRevenue = previousMonthlyRevenue[0]?.revenue || 0;
+    const previousOrders = previousMonthlyRevenue[0]?.orders || 0;
+    const previousUsers = previousMonthlyUsers[0]?.users || 0;
+
+    const revenueChange =
+      previousRevenue > 0
+        ? (
+            ((currentRevenue - previousRevenue) / previousRevenue) *
+            100
+          ).toFixed(1)
+        : 0;
+    const ordersChange =
+      previousOrders > 0
+        ? (((currentOrders - previousOrders) / previousOrders) * 100).toFixed(1)
+        : 0;
+    const usersChange =
+      previousUsers > 0
+        ? (((currentUsers - previousUsers) / previousUsers) * 100).toFixed(1)
+        : 0;
+
+    res.json({
+      monthlyRevenue,
+      monthlyUsers,
+      topProducts: topProductsWithDetails,
+      worstProducts: worstProductsWithDetails,
+      unsoldProducts,
+      currentPeriod: {
+        revenue: currentRevenue,
+        orders: currentOrders,
+        newUsers: currentUsers,
+        revenueChange: parseFloat(revenueChange),
+        ordersChange: parseFloat(ordersChange),
+        usersChange: parseFloat(usersChange),
+      },
+      previousPeriod: {
+        revenue: previousRevenue,
+        orders: previousOrders,
+        users: previousUsers,
+      },
+      timeRange: {
+        current: {
+          start: currentPeriodStart,
+          end: currentPeriodEnd,
+        },
+        previous: {
+          start: previousPeriodStart,
+          end: previousPeriodEnd,
+        },
+      },
+    });
+  } catch (err) {
+    console.error("Error in /analytics:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;

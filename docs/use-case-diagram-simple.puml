@@ -1,0 +1,81 @@
+@startuml Paradise_Perfume_Simple_Use_Case
+
+' ====================================
+' SIMPLIFIED VERSION - Dễ vẽ hơn
+' ====================================
+
+skinparam monochrome false
+skinparam shadowing false
+
+' ====================================
+' ACTORS
+' ====================================
+
+:Guest: as Guest
+:Customer: as Customer
+:Admin: as Admin
+
+Guest <|-- Customer
+
+' ====================================
+' SYSTEM
+' ====================================
+
+rectangle "Paradise Perfume System" {
+  
+  ' Guest use cases
+  (Xem Sản Phẩm) as ViewProducts
+  (Tìm Kiếm) as Search
+  (Xem Chi Tiết) as ViewDetail
+  (Đăng Ký) as Register
+  (Đăng Nhập) as Login
+  
+  ' Customer use cases
+  (Thêm Giỏ Hàng) as AddCart
+  (Quản Lý Giỏ) as ManageCart
+  (Đặt Hàng) as PlaceOrder
+  (Thanh Toán VNPay) as VNPay
+  (Thanh Toán COD) as COD
+  (Xem Đơn Hàng) as ViewOrders
+  (Đánh Giá) as Review
+  (AI Chatbot) as AIChatbot
+  (AI Gợi Ý) as AIRecommend
+  (Wishlist) as Wishlist
+  
+  ' Admin use cases
+  (Quản Lý Sản Phẩm) as ManageProducts
+  (Quản Lý Đơn Hàng) as ManageOrders
+  (Quản Lý Users) as ManageUsers
+  (Xem Thống Kê) as ViewStats
+  (Báo Cáo) as Reports
+  
+  ' Relationships
+  PlaceOrder ..> VNPay : <<include>>
+  PlaceOrder ..> COD : <<include>>
+  AIChatbot ..> ViewDetail : <<extend>>
+  AIRecommend ..> ViewProducts : <<extend>>
+}
+
+' Connections
+Guest --> ViewProducts
+Guest --> Search
+Guest --> ViewDetail
+Guest --> Register
+Guest --> Login
+
+Customer --> AddCart
+Customer --> ManageCart
+Customer --> PlaceOrder
+Customer --> ViewOrders
+Customer --> Review
+Customer --> AIChatbot
+Customer --> AIRecommend
+Customer --> Wishlist
+
+Admin --> ManageProducts
+Admin --> ManageOrders
+Admin --> ManageUsers
+Admin --> ViewStats
+Admin --> Reports
+
+@enduml

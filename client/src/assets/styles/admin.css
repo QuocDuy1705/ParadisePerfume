@@ -395,6 +395,141 @@
   color: var(--admin-gray-dark);
 }
 
+/* ========================= */
+/* Time Filter Section */
+/* ========================= */
+
+.time-filter-section {
+  background: var(--admin-white);
+  border: var(--admin-border);
+  border-radius: 0;
+  padding: 24px 40px;
+  margin-bottom: 30px;
+  box-shadow: var(--admin-shadow);
+}
+
+.time-filter-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: var(--admin-border);
+}
+
+.time-filter-header h3 {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--admin-black);
+  margin: 0;
+}
+
+.time-filter-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 10px 24px;
+  border: 2px solid var(--admin-gray);
+  background: var(--admin-white);
+  color: var(--admin-black);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: var(--admin-transition);
+  border-radius: 0;
+  text-transform: uppercase;
+}
+
+.filter-btn:hover {
+  border-color: var(--admin-black);
+  background: var(--admin-gray-light);
+}
+
+.filter-btn.active {
+  background: var(--admin-black);
+  color: var(--admin-white);
+  border-color: var(--admin-black);
+}
+
+.custom-date-range {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: var(--admin-border);
+  flex-wrap: wrap;
+}
+
+.date-input {
+  padding: 10px 16px;
+  border: 2px solid var(--admin-gray);
+  background: var(--admin-white);
+  color: var(--admin-black);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--admin-transition);
+  border-radius: 0;
+}
+
+.date-input:hover,
+.date-input:focus {
+  border-color: var(--admin-black);
+  outline: none;
+}
+
+.btn-apply {
+  padding: 10px 24px;
+  background: var(--admin-black);
+  color: var(--admin-white);
+  border: 2px solid var(--admin-black);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: var(--admin-transition);
+  border-radius: 0;
+  text-transform: uppercase;
+}
+
+.btn-apply:hover {
+  background: var(--admin-white);
+  color: var(--admin-black);
+}
+
+.btn-refresh {
+  padding: 10px 16px;
+  background: var(--admin-white);
+  color: var(--admin-black);
+  border: 2px solid var(--admin-gray);
+  cursor: pointer;
+  transition: var(--admin-transition);
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-refresh:hover {
+  border-color: var(--admin-black);
+  background: var(--admin-gray-light);
+}
+
+.overview-header .header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
 /* Chart Container */
 .chart-container {
   background: var(--admin-white);
@@ -2312,5 +2447,324 @@
   .btn-secondary {
     width: 100%;
     justify-content: center;
+  }
+}
+
+/* ========================= */
+/* Products Analysis Section */
+/* ========================= */
+
+.products-analysis {
+  display: grid;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.product-section {
+  background: var(--admin-white);
+  border: var(--admin-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--admin-shadow);
+  transition: var(--admin-transition);
+}
+
+.product-section:hover {
+  box-shadow: var(--admin-shadow-hover);
+}
+
+.section-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: var(--admin-border);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.section-icon {
+  color: var(--admin-black);
+  flex-shrink: 0;
+}
+
+.section-header h3 {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--admin-black);
+  margin: 0 0 4px 0;
+  letter-spacing: 0.5px;
+}
+
+.section-header p {
+  font-size: 14px;
+  color: var(--admin-gray-dark);
+  margin: 0;
+}
+
+.product-list {
+  display: grid;
+  gap: 16px;
+}
+
+.product-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--admin-gray-light);
+  border-radius: 8px;
+  transition: var(--admin-transition);
+  border: 2px solid transparent;
+}
+
+.product-item:hover {
+  background: var(--admin-white);
+  border-color: var(--admin-black);
+  transform: translateY(-2px);
+  box-shadow: var(--admin-shadow);
+}
+
+.product-rank {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--admin-black);
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--admin-white);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.product-rank.warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.product-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: var(--admin-border);
+  flex-shrink: 0;
+}
+
+.product-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.product-info h4 {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--admin-black);
+  margin: 0 0 8px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-stats {
+  font-size: 13px;
+  color: var(--admin-gray-dark);
+  margin: 4px 0;
+}
+
+.product-stats strong {
+  color: var(--admin-black);
+  font-weight: 600;
+}
+
+.product-revenue {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--admin-black);
+  margin: 4px 0 0 0;
+}
+
+.product-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--admin-black);
+  margin: 4px 0;
+}
+
+.product-stock {
+  font-size: 13px;
+  color: var(--admin-gray-dark);
+  margin: 4px 0 0 0;
+}
+
+.product-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.product-badge.success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.product-badge.warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.product-badge.danger {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Best Sellers Section */
+.product-section.best-sellers .section-icon {
+  color: #28a745;
+}
+
+.product-item.best {
+  border-left: 4px solid #28a745;
+}
+
+/* Worst Sellers Section */
+.product-section.worst-sellers .section-icon {
+  color: #ffc107;
+}
+
+.product-item.worst {
+  border-left: 4px solid #ffc107;
+}
+
+/* Unsold Products Section */
+.product-section.unsold .section-icon {
+  color: #dc3545;
+}
+
+.product-item.unsold {
+  border-left: 4px solid #dc3545;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--admin-gray-dark);
+  font-size: 14px;
+}
+
+/* Responsive for Products Analysis */
+@media (max-width: 768px) {
+  .product-item {
+    flex-wrap: wrap;
+  }
+
+  .product-rank {
+    order: 1;
+    min-width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+
+  .product-image {
+    order: 2;
+    width: 50px;
+    height: 50px;
+  }
+
+  .product-badge {
+    order: 3;
+    width: 32px;
+    height: 32px;
+  }
+
+  .product-info {
+    order: 4;
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  .section-header h3 {
+    font-size: 18px;
+  }
+
+  .header-content {
+    gap: 12px;
+  }
+
+  /* Time Filter Responsive */
+  .time-filter-section {
+    padding: 20px;
+  }
+
+  .time-filter-buttons {
+    gap: 8px;
+  }
+
+  .filter-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+    flex: 1;
+    min-width: calc(50% - 4px);
+  }
+
+  .custom-date-range {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .date-input,
+  .btn-apply {
+    width: 100%;
+  }
+
+  .overview-header .header-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-refresh {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-section {
+    padding: 16px;
+  }
+
+  .product-item {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .product-info h4 {
+    font-size: 14px;
+  }
+
+  .product-stats,
+  .product-price,
+  .product-stock {
+    font-size: 12px;
+  }
+
+  .product-revenue {
+    font-size: 13px;
+  }
+
+  .filter-btn {
+    min-width: 100%;
+  }
+
+  .time-filter-header h3 {
+    font-size: 12px;
   }
 }
