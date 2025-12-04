@@ -48,28 +48,28 @@ const FilterPanel = ({ onFilterChange, initialFilters = {} }) => {
         <div className="filter-content">
           {/* Category Filter */}
           <div className="filter-group">
-            <label className="filter-label">CATÉGORIE</label>
+            <label className="filter-label">DANH MỤC</label>
             <select
               className="filter-select"
               value={filters.category}
               onChange={(e) => handleFilterChange("category", e.target.value)}
             >
-              <option value="">Toutes les catégories</option>
-              <option value="Men">Pour Homme</option>
-              <option value="Women">Pour Femme</option>
-              <option value="Mini">Miniature</option>
-              <option value="Giftset">Coffret Cadeau</option>
+              <option value="">Tất cả danh mục</option>
+              <option value="Men">Nước Hoa Nam</option>
+              <option value="Women">Nước Hoa Nữ</option>
+              <option value="Mini">Nước Hoa Mini</option>
+              <option value="Giftset">Giftset</option>
             </select>
           </div>
 
           {/* Price Range */}
           <div className="filter-group">
-            <label className="filter-label">FOURCHETTE DE PRIX (VND)</label>
+            <label className="filter-label">KHOẢNG GIÁ (VNĐ)</label>
             <div className="price-inputs">
               <input
                 type="number"
                 className="filter-input"
-                placeholder="Min"
+                placeholder="Tối thiểu"
                 value={filters.minPrice}
                 onChange={(e) => handleFilterChange("minPrice", e.target.value)}
               />
@@ -77,7 +77,7 @@ const FilterPanel = ({ onFilterChange, initialFilters = {} }) => {
               <input
                 type="number"
                 className="filter-input"
-                placeholder="Max"
+                placeholder="Tối đa"
                 value={filters.maxPrice}
                 onChange={(e) => handleFilterChange("maxPrice", e.target.value)}
               />
@@ -86,22 +86,22 @@ const FilterPanel = ({ onFilterChange, initialFilters = {} }) => {
 
           {/* Sort By */}
           <div className="filter-group">
-            <label className="filter-label">TRIER PAR</label>
+            <label className="filter-label">SẮP XẾP THEO</label>
             <select
               className="filter-select"
               value={filters.sortBy}
               onChange={(e) => handleFilterChange("sortBy", e.target.value)}
             >
-              <option value="newest">Nouveautés</option>
-              <option value="price_asc">Prix: Croissant</option>
-              <option value="price_desc">Prix: Décroissant</option>
-              <option value="rating_desc">Mieux notés</option>
+              <option value="newest">Mới nhất</option>
+              <option value="price_asc">Giá: Thấp đến cao</option>
+              <option value="price_desc">Giá: Cao đến thấp</option>
+              <option value="rating_desc">Đánh giá cao nhất</option>
             </select>
           </div>
 
           {/* Reset Button */}
           <button className="filter-reset-btn" onClick={handleReset}>
-            RÉINITIALISER LES FILTRES
+            ĐẶT LẠI BỘ LỌC
           </button>
         </div>
       </div>

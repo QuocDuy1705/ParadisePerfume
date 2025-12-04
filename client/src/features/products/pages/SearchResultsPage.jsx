@@ -53,8 +53,8 @@ const SearchResultsPage = () => {
         setProducts(response.data.products || []);
         setPagination(response.data.pagination || {});
       } catch (err) {
-        console.error("Erreur lors de la recherche:", err);
-        setError("Une erreur s'est produite lors de la recherche.");
+        console.error("Lỗi khi tìm kiếm:", err);
+        setError("Đã xảy ra lỗi khi tìm kiếm sản phẩm.");
         setProducts([]);
       } finally {
         setLoading(false);
@@ -113,14 +113,14 @@ const SearchResultsPage = () => {
           <div className="search-title-section">
             <Search size={24} className="search-icon" />
             <h1 className="search-title">
-              {keyword ? <>RÉSULTATS POUR "{keyword}"</> : "TOUS LES PRODUITS"}
+              {keyword ? <>KẾT QUẢ TÌM KIẾM "{keyword}"</> : "TẤT CẢ SẢN PHẨM"}
             </h1>
           </div>
           {!loading && (
             <p className="search-count">
               {pagination.total}{" "}
-              {pagination.total === 1 ? "résultat" : "résultats"}{" "}
-              {keyword && `trouvé${pagination.total > 1 ? "s" : ""}`}
+              {pagination.total === 1 ? "kết quả" : "kết quả"}{" "}
+              {keyword && `tìm thấy`}
             </p>
           )}
         </div>
@@ -145,7 +145,7 @@ const SearchResultsPage = () => {
             {loading ? (
               <div className="search-loading">
                 <div className="loading-spinner"></div>
-                <p>Recherche en cours...</p>
+                <p>Đang tìm kiếm...</p>
               </div>
             ) : error ? (
               <div className="search-error">
@@ -154,7 +154,7 @@ const SearchResultsPage = () => {
                   className="retry-btn"
                   onClick={() => window.location.reload()}
                 >
-                  RÉESSAYER
+                  THỬ LẠI
                 </button>
               </div>
             ) : products.length === 0 ? (

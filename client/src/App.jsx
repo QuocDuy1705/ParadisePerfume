@@ -71,6 +71,11 @@ const OrderSuccess = lazy(() => import("./features/orders/OrderSuccess"));
 // Profile
 const ProfilePage = lazy(() => import("./features/profile/ProfilePage"));
 
+// Voucher
+const VoucherHuntPage = lazy(() =>
+  import("./features/voucher/VoucherHuntPage")
+);
+
 // Admin
 const AdminRoute = lazy(() => import("./features/admin/components/AdminRoute"));
 const AdminDashboard = lazy(() =>
@@ -173,6 +178,7 @@ const App = () => {
                 element={<GoogleCallbackPage />}
               />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/voucher-hunt" element={<VoucherHuntPage />} />
               <Route path="/order-success" element={<OrderSuccess />} />
 
               {/* AI Recommendation */}

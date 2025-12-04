@@ -15,14 +15,20 @@ import {
   Lock,
   Eye,
   EyeOff,
+  Ticket,
+  Copy,
+  Check,
 } from "lucide-react";
+import { toast } from "react-toastify";
 import "../../assets/styles/profile.css";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
+  const [savedCoupons, setSavedCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("profile");
+  const [copiedCode, setCopiedCode] = useState(null);
   const navigate = useNavigate();
 
   // Password change states
@@ -66,6 +72,15 @@ const ProfilePage = () => {
           }
         );
         setOrders(resOrders.data);
+
+        // Lấy saved coupons
+        const resCoupons = await axios.get(
+          "http://localhost:5000/api/coupons/saved",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setSavedCoupons(resCoupons.data);
       } catch (err) {
         console.error(err);
         localStorage.removeItem("token");
@@ -147,6 +162,29 @@ const ProfilePage = () => {
     }
   };
 
+  const handleCopyCode = (code) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    toast.success(`Đã copy mã: ${code}`);
+    setTimeout(() => setCopiedCode(null), 2000);
+  };
+
+  const handleUnsaveCoupon = async (couponId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `http://localhost:5000/api/coupons/unsave/${couponId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setSavedCoupons(savedCoupons.filter((c) => c._id !== couponId));
+      toast.success("Đã bỏ lưu voucher");
+    } catch (error) {
+      toast.error("Không thể bỏ lưu voucher");
+    }
+  };
+
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -217,6 +255,13 @@ const ProfilePage = () => {
           >
             <Lock size={18} />
             Đổi mật khẩu
+          </button>
+          <button
+            className={`tab-btn ${activeTab === "coupons" ? "active" : ""}`}
+            onClick={() => setActiveTab("coupons")}
+          >
+            <Ticket size={18} />
+            Voucher đã lưu
           </button>
           <button
             className={`tab-btn ${activeTab === "wishlist" ? "active" : ""}`}
@@ -617,6 +662,111 @@ const ProfilePage = () => {
                   {passwordLoading ? "ĐANG XỬ LÝ..." : "ĐỔI MẬT KHẨU"}
                 </button>
               </form>
+            </div>
+          )}
+
+          {/* Saved Coupons Tab */}
+          {activeTab === "coupons" && (
+            <div className="saved-coupons-section">
+              <div className="section-header">
+                <h2 className="section-title">VOUCHER ĐÃ LƯU</h2>
+                <button
+                  className="browse-coupons-btn"
+                  onClick={() => navigate("/voucher-hunt")}
+                >
+                  <Ticket size={16} />
+                  Săn thêm voucher
+                </button>
+              </div>
+
+              {savedCoupons.length === 0 ? (
+                <div className="empty-coupons">
+                  <Ticket size={80} strokeWidth={1} />
+                  <h3>Chưa có voucher nào</h3>
+                  <p>Ghé trang săn voucher để lưu các mã giảm giá hấp dẫn!</p>
+                  <button
+                    className="browse-btn"
+                    onClick={() => navigate("/voucher-hunt")}
+                  >
+                    Săn voucher ngay
+                  </button>
+                </div>
+              ) : (
+                <div className="coupons-grid">
+                  {savedCoupons.map((coupon) => (
+                    <div key={coupon._id} className="saved-coupon-card">
+                      <div className="coupon-header">
+                        <div className="coupon-discount">
+                          <span className="discount-value">
+                            {coupon.discountType === "percentage"
+                              ? `${coupon.discountValue}%`
+                              : `${coupon.discountValue.toLocaleString()}đ`}
+                          </span>
+                          <span className="discount-label">GIẢM</span>
+                        </div>
+                        <button
+                          className="remove-coupon-btn"
+                          onClick={() => handleUnsaveCoupon(coupon._id)}
+                          title="Bỏ lưu"
+                        >
+                          ×
+                        </button>
+                      </div>
+
+                      <div className="coupon-body">
+                        <h4 className="coupon-description">
+                          {coupon.description}
+                        </h4>
+
+                        <div className="coupon-details">
+                          {coupon.minOrderAmount > 0 && (
+                            <p className="detail-item">
+                              📦 Đơn tối thiểu:{" "}
+                              {coupon.minOrderAmount.toLocaleString()}đ
+                            </p>
+                          )}
+                          {coupon.maxDiscountAmount && (
+                            <p className="detail-item">
+                              💰 Giảm tối đa:{" "}
+                              {coupon.maxDiscountAmount.toLocaleString()}đ
+                            </p>
+                          )}
+                          {coupon.endDate && (
+                            <p className="detail-item">
+                              📅 HSD:{" "}
+                              {new Date(coupon.endDate).toLocaleDateString(
+                                "vi-VN"
+                              )}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="coupon-code-section">
+                          <div className="code-box">
+                            <code>{coupon.code}</code>
+                          </div>
+                          <button
+                            className="copy-code-btn"
+                            onClick={() => handleCopyCode(coupon.code)}
+                          >
+                            {copiedCode === coupon.code ? (
+                              <>
+                                <Check size={16} />
+                                Đã copy
+                              </>
+                            ) : (
+                              <>
+                                <Copy size={16} />
+                                Copy
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>

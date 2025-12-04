@@ -8,6 +8,9 @@ import {
   updateCoupon,
   deleteCoupon,
   getCouponStats,
+  saveCoupon,
+  unsaveCoupon,
+  getSavedCoupons,
 } from "../controllers/couponController.js";
 import { protect, admin } from "../middleware/auth.js";
 
@@ -17,6 +20,11 @@ const router = express.Router();
 router.get("/active", getActiveCoupons); // Get active coupons for display
 router.post("/validate", protect, validateCoupon); // Validate coupon before checkout
 router.post("/apply", protect, applyCoupon); // Apply coupon (called when order created)
+
+// User routes - Save/Unsave coupons
+router.post("/save", protect, saveCoupon); // Save coupon to user's list
+router.delete("/unsave/:couponId", protect, unsaveCoupon); // Remove coupon from saved list
+router.get("/saved", protect, getSavedCoupons); // Get user's saved coupons
 
 // Admin routes
 router.get("/", protect, admin, getAllCoupons); // Get all coupons

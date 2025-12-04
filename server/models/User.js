@@ -24,6 +24,14 @@ const userSchema = new mongoose.Schema(
     resetPasswordExpires: { type: Date },
 
     isAdmin: { type: Boolean, default: false },
+
+    // Saved Coupons (for user to save vouchers)
+    savedCoupons: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Coupon",
+      },
+    ],
   },
   { timestamps: true }
 );

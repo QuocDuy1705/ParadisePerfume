@@ -1,81 +1,110 @@
-@startuml Paradise_Perfume_Simple_Use_Case
+@startuml Paradise_Perfume_Use_Case
 
-' ====================================
-' SIMPLIFIED VERSION - Dễ vẽ hơn
-' ====================================
+' ========================================
+' PARADISE PERFUME - USE CASE DIAGRAM
+' Thiết kế theo mẫu đơn giản, dễ hiểu
+' ========================================
 
-skinparam monochrome false
-skinparam shadowing false
+left to right direction
+skinparam packageStyle rectangle
 
-' ====================================
+' ========================================
 ' ACTORS
-' ====================================
+' ========================================
 
-:Guest: as Guest
-:Customer: as Customer
-:Admin: as Admin
+actor "Admin" as Admin
+actor "Khách hàng đã đăng nhập" as Customer  
+actor "Khách vãng lai" as Guest
 
-Guest <|-- Customer
+' Quan hệ kế thừa
+Customer --|> Guest
 
-' ====================================
-' SYSTEM
-' ====================================
+' ========================================
+' HỆ THỐNG
+' ========================================
 
-rectangle "Paradise Perfume System" {
+rectangle "Hệ thống" {
+
+  ' ======================================
+  ' QUẢN TRỊ VIÊN (ADMIN)
+  ' ======================================
   
-  ' Guest use cases
-  (Xem Sản Phẩm) as ViewProducts
-  (Tìm Kiếm) as Search
-  (Xem Chi Tiết) as ViewDetail
-  (Đăng Ký) as Register
-  (Đăng Nhập) as Login
+  (Quản lý sản phẩm) as UC_AdminProducts
+  (Quản lý danh mục) as UC_AdminCategories
+  (Quản lý người dùng) as UC_AdminUsers
+  (Quản lý đơn hàng) as UC_AdminOrders
+  (Quản lý nhận hàng) as UC_AdminShipping
+  (Quản lý phản hồi) as UC_AdminFeedback
+  (Quản lý bài đăng) as UC_AdminBlog
+  (Quản lý loại khuyến mãi) as UC_AdminPromotions
+  (Quản lý khuyến mãi) as UC_AdminCoupons
+  (Quản lý loại ship) as UC_AdminShippingTypes
+  (Quản lý đơn hàng) as UC_AdminOrderManage
+  (Quản lý so nhận) as UC_AdminReceive
+  (Quản lý nhà cung cấp) as UC_AdminSuppliers
+  (Quản lý nhập hàng) as UC_AdminImport
   
-  ' Customer use cases
-  (Thêm Giỏ Hàng) as AddCart
-  (Quản Lý Giỏ) as ManageCart
-  (Đặt Hàng) as PlaceOrder
-  (Thanh Toán VNPay) as VNPay
-  (Thanh Toán COD) as COD
-  (Xem Đơn Hàng) as ViewOrders
-  (Đánh Giá) as Review
-  (AI Chatbot) as AIChatbot
-  (AI Gợi Ý) as AIRecommend
-  (Wishlist) as Wishlist
+  ' ======================================
+  ' KHÁCH HÀNG ĐÃ ĐĂNG NHẬP
+  ' ======================================
   
-  ' Admin use cases
-  (Quản Lý Sản Phẩm) as ManageProducts
-  (Quản Lý Đơn Hàng) as ManageOrders
-  (Quản Lý Users) as ManageUsers
-  (Xem Thống Kê) as ViewStats
-  (Báo Cáo) as Reports
+  (Quản lý đặt chỗ cá nhân) as UC_MyBookings
+  (Quản lý thông tin cá nhân) as UC_MyProfile
+  (Xem lịch sử mua hàng) as UC_OrderHistory
+  (Xem thông tin khuyến mãi cá loại) as UC_ViewPromotions
+  (Đăng ký tài khoản) as UC_Register
+  (Đặt hàng thanh toán) as UC_Checkout
+  (Đặt hàng thanh toán) as UC_Payment
+  (Thiết lập phản áng giỏ hàng) as UC_AddToCart
+  (Bình luận đánh giá) as UC_Review
   
-  ' Relationships
-  PlaceOrder ..> VNPay : <<include>>
-  PlaceOrder ..> COD : <<include>>
-  AIChatbot ..> ViewDetail : <<extend>>
-  AIRecommend ..> ViewProducts : <<extend>>
+  ' ======================================
+  ' KHÁCH VÃNG LAI
+  ' ======================================
+  
+  (Xem danh sách sản phẩm) as UC_ViewProducts
+  (Xem tin tức bài đăng) as UC_ViewBlogs
+  
 }
 
-' Connections
-Guest --> ViewProducts
-Guest --> Search
-Guest --> ViewDetail
-Guest --> Register
-Guest --> Login
+' ========================================
+' CONNECTIONS - ADMIN
+' ========================================
 
-Customer --> AddCart
-Customer --> ManageCart
-Customer --> PlaceOrder
-Customer --> ViewOrders
-Customer --> Review
-Customer --> AIChatbot
-Customer --> AIRecommend
-Customer --> Wishlist
+Admin --> UC_AdminProducts
+Admin --> UC_AdminCategories
+Admin --> UC_AdminUsers
+Admin --> UC_AdminOrders
+Admin --> UC_AdminShipping
+Admin --> UC_AdminFeedback
+Admin --> UC_AdminBlog
+Admin --> UC_AdminPromotions
+Admin --> UC_AdminCoupons
+Admin --> UC_AdminShippingTypes
+Admin --> UC_AdminOrderManage
+Admin --> UC_AdminReceive
+Admin --> UC_AdminSuppliers
+Admin --> UC_AdminImport
 
-Admin --> ManageProducts
-Admin --> ManageOrders
-Admin --> ManageUsers
-Admin --> ViewStats
-Admin --> Reports
+' ========================================
+' CONNECTIONS - CUSTOMER
+' ========================================
+
+Customer --> UC_MyBookings
+Customer --> UC_MyProfile
+Customer --> UC_OrderHistory
+Customer --> UC_ViewPromotions
+Customer --> UC_Register
+Customer --> UC_Checkout
+Customer --> UC_Payment
+Customer --> UC_AddToCart
+Customer --> UC_Review
+
+' ========================================
+' CONNECTIONS - GUEST
+' ========================================
+
+Guest --> UC_ViewProducts
+Guest --> UC_ViewBlogs
 
 @enduml

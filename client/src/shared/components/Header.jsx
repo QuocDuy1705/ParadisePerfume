@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { FaUser, FaShoppingBag } from "react-icons/fa";
-import { Search, Heart } from "lucide-react";
+import { Search, Heart, Ticket } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../core/context/AuthContext";
 import { useCart } from "../../core/context/CartContext";
@@ -58,6 +58,19 @@ const Header = () => {
             onClick={() => setShowSearch(!showSearch)}
             style={{ cursor: "pointer" }}
           />
+
+          {/* Voucher Hunt Icon */}
+          <Link
+            to="/voucher-hunt"
+            onClick={scrollToTop}
+            style={{ position: "relative", display: "inline-block" }}
+            title="Săn Voucher"
+          >
+            <Ticket
+              className="icon voucher-icon"
+              style={{ cursor: "pointer" }}
+            />
+          </Link>
 
           {/* Wishlist Icon */}
           <Link
@@ -139,6 +152,9 @@ const Header = () => {
         </Link>
         <Link to="/giftset" onClick={scrollToTop}>
           GIFTSET
+        </Link>
+        <Link to="/voucher-hunt" onClick={scrollToTop}>
+          SĂN VOUCHER
         </Link>
         <Link to="/blog" onClick={scrollToTop}>
           BLOG

@@ -1,4 +1,5 @@
 import Coupon from "../models/Coupon.js";
+import User from "../models/User.js";
 
 // Get all coupons (Admin)
 export const getAllCoupons = async (req, res) => {
@@ -14,17 +15,26 @@ export const getAllCoupons = async (req, res) => {
 // Get active coupons (Public - for display)
 export const getActiveCoupons = async (req, res) => {
   try {
-    const coupons = await Coupon.findActiveCoupons();
+    const now = new Date();
+
+    // Get both active and upcoming coupons
+    const coupons = await Coupon.find({
+      isActive: true,
+      endDate: { $gte: now }, // Not expired yet
+    }).sort({ startDate: 1 }); // Sort by start date
 
     // Only return public info
     const publicCoupons = coupons.map((coupon) => ({
+      _id: coupon._id, // Add _id for save functionality
       code: coupon.code,
       description: coupon.description,
       discountType: coupon.discountType,
       discountValue: coupon.discountValue,
       minOrderAmount: coupon.minOrderAmount,
       maxDiscountAmount: coupon.maxDiscountAmount,
+      startDate: coupon.startDate,
       endDate: coupon.endDate,
+      isUpcoming: now < coupon.startDate, // Flag for upcoming coupons
     }));
 
     res.json(publicCoupons);
@@ -283,5 +293,93 @@ export const getCouponStats = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Lỗi khi lấy thống kê mã giảm giá" });
+  }
+};
+
+// Save coupon to user's saved list
+export const saveCoupon = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { couponId } = req.body;
+
+    // Check if coupon exists and is active
+    const coupon = await Coupon.findById(couponId);
+    if (!coupon) {
+      return res.status(404).json({ message: "Mã giảm giá không tồn tại" });
+    }
+
+    if (!coupon.isActive) {
+      return res
+        .status(400)
+        .json({ message: "Mã giảm giá không còn hiệu lực" });
+    }
+
+    // Check if already saved
+    const user = await User.findById(userId);
+    if (user.savedCoupons.includes(couponId)) {
+      return res.status(400).json({ message: "Bạn đã lưu mã này rồi" });
+    }
+
+    // Add to saved coupons
+    user.savedCoupons.push(couponId);
+    await user.save();
+
+    res.json({
+      message: "Đã lưu mã giảm giá thành công",
+      savedCoupons: user.savedCoupons,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Lỗi khi lưu mã giảm giá" });
+  }
+};
+
+// Remove coupon from user's saved list
+export const unsaveCoupon = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { couponId } = req.params;
+
+    const user = await User.findById(userId);
+
+    // Remove from saved coupons
+    user.savedCoupons = user.savedCoupons.filter(
+      (id) => id.toString() !== couponId
+    );
+    await user.save();
+
+    res.json({
+      message: "Đã bỏ lưu mã giảm giá",
+      savedCoupons: user.savedCoupons,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Lỗi khi bỏ lưu mã giảm giá" });
+  }
+};
+
+// Get user's saved coupons
+export const getSavedCoupons = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await User.findById(userId).populate({
+      path: "savedCoupons",
+      match: { isActive: true }, // Only get active coupons
+    });
+
+    // Filter out expired coupons
+    const activeCoupons = user.savedCoupons.filter((coupon) => {
+      if (!coupon) return false;
+      if (coupon.endDate && new Date(coupon.endDate) < new Date()) {
+        return false;
+      }
+      return true;
+    });
+
+    res.json(activeCoupons);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Lỗi khi lấy danh sách mã đã lưu" });
   }
 };
