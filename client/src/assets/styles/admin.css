@@ -1607,6 +1607,162 @@
   align-items: flex-end;
 }
 
+/* User Detail Modal */
+.modal-large {
+  max-width: 800px !important;
+  width: 90%;
+}
+
+.user-detail-content {
+  padding: 20px 0;
+}
+
+.detail-section {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--admin-gray);
+}
+
+.detail-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.detail-avatar {
+  width: 120px;
+  height: 120px;
+  background: var(--admin-gray-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--admin-gray-dark);
+  margin: 0 auto 20px;
+  overflow: hidden;
+}
+
+.detail-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detail-section h3 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.role-badge.admin {
+  background: var(--admin-black);
+  color: var(--admin-white);
+}
+
+.role-badge.user {
+  background: var(--admin-gray-light);
+  color: var(--admin-gray-dark);
+  border: 1px solid var(--admin-gray);
+}
+
+.detail-section h4 {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  color: var(--admin-black);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.detail-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px;
+  background: var(--admin-gray-light);
+  border-radius: 4px;
+  transition: var(--admin-transition);
+}
+
+.detail-item:hover {
+  background: #ececec;
+}
+
+.detail-item svg {
+  color: var(--admin-gray-dark);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.detail-item > div {
+  flex: 1;
+}
+
+.detail-item label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--admin-gray-dark);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.detail-item p {
+  font-size: 14px;
+  color: var(--admin-black);
+  word-wrap: break-word;
+  line-height: 1.5;
+}
+
+.mono-text {
+  font-family: "Courier New", monospace;
+  font-size: 12px !important;
+  color: var(--admin-gray-dark) !important;
+}
+
+.auth-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.auth-badge.google {
+  background: #4285f4;
+  color: white;
+}
+
+.auth-badge.local {
+  background: var(--admin-black);
+  color: white;
+}
+
 .role-selector {
   display: flex;
   flex-direction: column;
@@ -1670,6 +1826,15 @@
 .btn-icon.btn-delete:hover {
   background: #ffe6e6;
   border-color: #cc0000;
+}
+
+.btn-icon.btn-info {
+  color: #0066cc;
+}
+
+.btn-icon.btn-info:hover {
+  background: #e6f2ff;
+  border-color: #0066cc;
 }
 
 /* Modal Updates */

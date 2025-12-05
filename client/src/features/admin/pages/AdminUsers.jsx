@@ -10,6 +10,11 @@ import {
   X,
   Eye,
   EyeOff,
+  Info,
+  Mail,
+  MapPin,
+  Clock,
+  Bookmark,
 } from "lucide-react";
 import "../../../assets/styles/admin.css";
 
@@ -20,6 +25,8 @@ const AdminUsers = () => {
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [createForm, setCreateForm] = useState({
     firstName: "",
@@ -75,6 +82,11 @@ const AdminUsers = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const viewUserDetails = (user) => {
+    setSelectedUser(user);
+    setShowDetailModal(true);
   };
 
   const handleCreateUser = async (e) => {
@@ -241,6 +253,13 @@ const AdminUsers = () => {
                     </select>
                   </div>
                   <button
+                    className="btn-icon btn-info"
+                    onClick={() => viewUserDetails(user)}
+                    title="Xem chi tiết"
+                  >
+                    <Info size={18} />
+                  </button>
+                  <button
                     className="btn-icon btn-delete"
                     onClick={() => deleteUser(user._id)}
                     disabled={loading}
@@ -254,6 +273,155 @@ const AdminUsers = () => {
           </div>
         )}
       </div>
+
+      {/* User Detail Modal */}
+      {showDetailModal && selectedUser && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowDetailModal(false)}
+        >
+          <div
+            className="modal-content modal-large"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <h2>Thông tin chi tiết người dùng</h2>
+              <button
+                className="btn-close"
+                onClick={() => setShowDetailModal(false)}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="user-detail-content">
+              <div className="detail-section">
+                <div className="detail-avatar">
+                  {selectedUser.profilePicture ? (
+                    <img src={selectedUser.profilePicture} alt="Avatar" />
+                  ) : (
+                    <User size={64} />
+                  )}
+                </div>
+                <h3>
+                  {selectedUser.title && `${selectedUser.title}. `}
+                  {selectedUser.firstName} {selectedUser.lastName}
+                </h3>
+                <span
+                  className={`role-badge ${
+                    selectedUser.isAdmin ? "admin" : "user"
+                  }`}
+                >
+                  {selectedUser.isAdmin ? (
+                    <>
+                      <Shield size={14} /> Quản trị viên
+                    </>
+                  ) : (
+                    <>
+                      <User size={14} /> Người dùng
+                    </>
+                  )}
+                </span>
+              </div>
+
+              <div className="detail-section">
+                <h4>Thông tin cá nhân</h4>
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <Mail size={18} />
+                    <div>
+                      <label>Email</label>
+                      <p>{selectedUser.email}</p>
+                    </div>
+                  </div>
+                  <div className="detail-item">
+                    <MapPin size={18} />
+                    <div>
+                      <label>Quốc gia</label>
+                      <p>{selectedUser.country || "Chưa cập nhật"}</p>
+                    </div>
+                  </div>
+                  <div className="detail-item">
+                    <Shield size={18} />
+                    <div>
+                      <label>Phương thức đăng nhập</label>
+                      <p>
+                        {selectedUser.authProvider === "google" ? (
+                          <span className="auth-badge google">Google</span>
+                        ) : (
+                          <span className="auth-badge local">
+                            Email/Password
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  {selectedUser.googleId && (
+                    <div className="detail-item">
+                      <Shield size={18} />
+                      <div>
+                        <label>Google ID</label>
+                        <p className="mono-text">{selectedUser.googleId}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="detail-section">
+                <h4>Thông tin tài khoản</h4>
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <Calendar size={18} />
+                    <div>
+                      <label>Ngày tạo tài khoản</label>
+                      <p>
+                        {new Date(selectedUser.createdAt).toLocaleString(
+                          "vi-VN"
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="detail-item">
+                    <Clock size={18} />
+                    <div>
+                      <label>Cập nhật lần cuối</label>
+                      <p>
+                        {new Date(selectedUser.updatedAt).toLocaleString(
+                          "vi-VN"
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="detail-item">
+                    <Bookmark size={18} />
+                    <div>
+                      <label>Voucher đã lưu</label>
+                      <p>{selectedUser.savedCoupons?.length || 0} voucher</p>
+                    </div>
+                  </div>
+                  <div className="detail-item">
+                    <User size={18} />
+                    <div>
+                      <label>User ID</label>
+                      <p className="mono-text">{selectedUser._id}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                className="btn-secondary"
+                onClick={() => setShowDetailModal(false)}
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Create User Modal */}
       {showCreateModal && (
