@@ -38,9 +38,9 @@ export default function PaymentPage() {
           </div>
 
           <div className="content-section">
-            <h2 className="section-title">2. THANH TOÁN QUA VNPAY</h2>
+            <h2 className="section-title">2. THANH TOÁN QUA TPBANK</h2>
             <p className="section-text">
-              VNPay là cổng thanh toán trực tuyến uy tín, được liên kết với hơn
+              TPBANK là cổng thanh toán trực tuyến uy tín, được liên kết với hơn
               40 ngân hàng tại Việt Nam.
             </p>
             <h3 className="section-subtitle">Các hình thức thanh toán:</h3>
@@ -53,7 +53,7 @@ export default function PaymentPage() {
               Cách thanh toán:
             </h3>
             <ul className="info-list">
-              <li>Chọn phương thức "VNPay" khi thanh toán</li>
+              <li>Chọn phương thức "TPBANK" khi thanh toán</li>
               <li>Chọn ngân hàng của bạn trong danh sách</li>
               <li>Đăng nhập Internet Banking và xác nhận thanh toán</li>
               <li>Nhận thông báo thanh toán thành công</li>
@@ -63,30 +63,6 @@ export default function PaymentPage() {
               256-bit, đảm bảo an toàn thông tin thẻ và giao dịch.
             </p>
           </div>
-
-          <div className="content-section">
-            <h2 className="section-title">3. THANH TOÁN QUA MOMO</h2>
-            <p className="section-text">
-              MoMo là ví điện tử hàng đầu Việt Nam với hơn 30 triệu người dùng.
-            </p>
-            <h3 className="section-subtitle">Ưu điểm:</h3>
-            <ul className="info-list">
-              <li>Thanh toán nhanh chóng chỉ với 1 chạm</li>
-              <li>Tích điểm, nhận hoàn tiền từ MoMo</li>
-              <li>Liên kết thẻ ngân hàng hoặc nạp tiền dễ dàng</li>
-              <li>Bảo mật với mã PIN và vân tay</li>
-            </ul>
-            <h3 className="section-subtitle" style={{ marginTop: "20px" }}>
-              Cách thanh toán:
-            </h3>
-            <ul className="info-list">
-              <li>Chọn phương thức "MoMo" khi thanh toán</li>
-              <li>Quét mã QR hoặc chuyển sang ứng dụng MoMo</li>
-              <li>Nhập mã PIN MoMo để xác nhận</li>
-              <li>Hoàn tất thanh toán và nhận thông báo</li>
-            </ul>
-          </div>
-
           <div className="content-section">
             <h2 className="section-title">AN TOÀN & BẢO MẬT</h2>
             <p className="section-text">

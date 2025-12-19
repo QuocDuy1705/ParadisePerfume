@@ -240,15 +240,25 @@ const AdminOrders = () => {
                   <div className="detail-item">
                     <span className="detail-label">Họ tên:</span>
                     <span className="detail-value">
-                      {selectedOrder.userId
-                        ? `${selectedOrder.userId.firstName} ${selectedOrder.userId.lastName}`
-                        : "N/A"}
+                      {selectedOrder.shippingAddress?.fullName ||
+                        (selectedOrder.userId
+                          ? `${selectedOrder.userId.firstName} ${selectedOrder.userId.lastName}`
+                          : "N/A")}
                     </span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">Email:</span>
                     <span className="detail-value">
-                      {selectedOrder.userId?.email || "N/A"}
+                      {selectedOrder.shippingAddress?.email ||
+                        selectedOrder.userId?.email ||
+                        selectedOrder.guestEmail ||
+                        "N/A"}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Số điện thoại:</span>
+                    <span className="detail-value">
+                      {selectedOrder.shippingAddress?.phone || "N/A"}
                     </span>
                   </div>
                   <div className="detail-item">
@@ -268,6 +278,39 @@ const AdminOrders = () => {
                       <span>{getStatusText(selectedOrder.status)}</span>
                     </span>
                   </div>
+                </div>
+              </div>
+
+              <div className="detail-section">
+                <h4>Địa chỉ giao hàng</h4>
+                <div className="detail-grid">
+                  <div className="detail-item" style={{ gridColumn: "1 / -1" }}>
+                    <span className="detail-label">Địa chỉ:</span>
+                    <span className="detail-value">
+                      {selectedOrder.shippingAddress?.address || "N/A"}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Quận/Huyện:</span>
+                    <span className="detail-value">
+                      {selectedOrder.shippingAddress?.district || "N/A"}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Tỉnh/Thành phố:</span>
+                    <span className="detail-value">
+                      {selectedOrder.shippingAddress?.city || "N/A"}
+                    </span>
+                  </div>
+                  {selectedOrder.note && (
+                    <div
+                      className="detail-item"
+                      style={{ gridColumn: "1 / -1" }}
+                    >
+                      <span className="detail-label">Ghi chú:</span>
+                      <span className="detail-value">{selectedOrder.note}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 

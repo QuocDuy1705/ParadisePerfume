@@ -40,7 +40,7 @@ export default function HowToOrderPage() {
                 <h3 className="timeline-title">Bước 3: Điền thông tin</h3>
                 <p className="timeline-text">
                   Nhập thông tin giao hàng (họ tên, địa chỉ, số điện thoại) và
-                  chọn phương thức thanh toán (COD, VNPay, MoMo).
+                  chọn phương thức thanh toán (COD, TPBANK).
                 </p>
               </div>
 
@@ -67,21 +67,12 @@ export default function HowToOrderPage() {
             </ul>
 
             <h3 className="section-subtitle" style={{ marginTop: "20px" }}>
-              2. Thanh toán qua VNPay
+              2. Thanh toán qua TPBANK
             </h3>
             <ul className="info-list">
               <li>Thanh toán bằng thẻ ATM, tài khoản ngân hàng</li>
               <li>An toàn, bảo mật, giao dịch nhanh chóng</li>
               <li>Nhận ưu đãi từ các ngân hàng liên kết</li>
-            </ul>
-
-            <h3 className="section-subtitle" style={{ marginTop: "20px" }}>
-              3. Thanh toán qua MoMo
-            </h3>
-            <ul className="info-list">
-              <li>Thanh toán qua ví điện tử MoMo</li>
-              <li>Quét mã QR hoặc nhập số điện thoại</li>
-              <li>Tích điểm, nhận hoàn tiền từ MoMo</li>
             </ul>
           </div>
 

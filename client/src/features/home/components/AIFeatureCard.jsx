@@ -22,21 +22,21 @@ const AIFeatureCard = () => {
 
           <div className="ai-feature-benefits">
             <div className="ai-benefit">
-              <span className="benefit-icon">✨</span>
+              <span className="benefit-icon"></span>
               <span>Phân tích AI chính xác</span>
             </div>
             <div className="ai-benefit">
-              <span className="benefit-icon">🎯</span>
+              <span className="benefit-icon"></span>
               <span>Gợi ý cá nhân hóa</span>
             </div>
             <div className="ai-benefit">
-              <span className="benefit-icon">⚡</span>
+              <span className="benefit-icon"></span>
               <span>Kết quả tức thì</span>
             </div>
           </div>
 
           <Link to="/ai-recommend" className="ai-feature-btn">
-            <span className="btn-icon">🚀</span>
+            <span className="btn-icon"></span>
             <span className="btn-text">Bắt Đầu Ngay - Miễn Phí</span>
             <span className="btn-arrow">→</span>
           </Link>
